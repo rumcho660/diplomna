@@ -1,5 +1,5 @@
 [package]
-name = "Game"
+name = "diplomna"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,3 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.9.1"
-
-[[bin]]
-name = "Game"
-path = "main.rs"

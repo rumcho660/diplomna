@@ -3,13 +3,6 @@
 version = 3
 
 [[package]]
-name = "Game"
-version = "0.1.0"
-dependencies = [
- "bevy",
-]
-
-[[package]]
 name = "ab_glyph"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1229,6 +1222,13 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "diplomna"
+version = "0.1.0"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]
