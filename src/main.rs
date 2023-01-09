@@ -1,6 +1,4 @@
-use bevy::window::{CompositeAlphaMode, CursorGrabMode, PresentMode};
-use bevy::prelude::*;
-use bevy::window::CursorIcon::Default;
+use bevy:: prelude::*;
 
 
 fn main() {
@@ -12,7 +10,10 @@ fn main() {
             },
             ..default()
         }))
+        .add_startup_system(setup_camera)
         .run();
-
 }
 
+fn setup_camera(commands: &mut Commands) {
+    commands.spawn(Camera2dBundle::default());
+}
