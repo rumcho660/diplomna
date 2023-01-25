@@ -36,7 +36,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
     let font = asset_server.load("Yesillow.otf");
     let text_style = TextStyle {
         font,
-        font_size: 100.0,
+        font_size: 60.0,
         color: Color::RED,
     };
 
@@ -46,7 +46,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
     if timer_end.0.elapsed_secs() == 1.0{
-        let onesec = commands.spawn(Text2dBundle {
+        let one = commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec", text_style.clone()),
             ..default()
         });
