@@ -21,6 +21,7 @@ fn main() {
         }))
         .add_startup_system(setup)
         .add_state(GameState::MainMenu)
+        //.add_system(setup_main_menu)
         .add_system(timer_til_game_end)
         .run();
 }
@@ -155,36 +156,99 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
 
+
+//Menu
+
+
+
 #[derive(Component)]
-pub struct MainMenu;
-pub struct MainGame;
+struct MainMenu;
+struct MainGame;
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
-pub enum GameState {
+enum GameState {
     MainGame,
     MainMenu
 }
 
+
+#[derive(Component, Copy, Clone)]
 pub enum MenuItem {
     Start,
     Quit
 }
 
-pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> , mut clear_color: ResMut<ClearColor>) {
-    //let font1 = asset_server.load("ARCADECLASSIC.TTF");
-    //let clear_color = Color:: BLACK;
+pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> ) {
+    let font = asset_server.load("ARCADECLASSIC.TTF");
+
+    let menu_tytle_style = TextStyle {
+        font,
+        font_size: 40.0,
+        color: Color::WHITE
+    };
+
 
     commands.spawn(NodeBundle {
-            style: Style {
-                size: Size {
-                    width: Val::Percent(50.0),
-                    height: Val::Percent(50.0),
-                },
-                flex_direction: FlexDirection::ColumnReverse,
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::SpaceEvenly,
-                ..Style::default()
+        style: Style{
+            direction: Direction::RightToLeft,
+            flex_direction: FlexDirection::Column,
+            align_items: AlignItems::Center,
+            align_content: AlignContent::Center,
+            justify_content: JustifyContent::SpaceEvenly,
+            size: Size{
+                width: Val::Percent(100.0),
+                height: Val::Percent(50.0),
             },
-            ..default()
+            ..Style::default()
+        },
+        background_color: BackgroundColor(Color::CRIMSON),
+        visibility: Visibility{ is_visible: false },
+        ..NodeBundle::default()
+    })
+        .insert(MainMenu)
+        .with_children(|mut parent| {
+            parent.spawn(Text2dBundle {
+                text: Text::from_section("Dr. Covid", menu_tytle_style.clone()),
+                ..Text2dBundle::default()
+            });
         });
 }
+
+
+fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuItem) {
+    let button_style = TextStyle{
+        font,
+        font_size: 20.0,
+        color: Color::WHITE
+    } ;
+
+
+    parent.spawn(ButtonBundle {
+        style: Style{
+            align_items: Default::default(),
+            align_self: Default::default(),
+            align_content: Default::default(),
+            justify_content: Default::default(),
+            size: Default::default(),
+            ..Style::default()
+        },
+        ..ButtonBundle::default()
+    })
+        .insert(menu_item)
+        .with_children(|parent| {
+            parent.spawn_bundle(Text2dBundle {
+                text: Text::from_section(
+                    match menu_item {
+                        MenuItem::Start => "Start",
+                        MenuItem::Quit => "Quit"
+
+
+                    },button_style.clone()
+
+                ),
+                ..Text2dBundle::default()
+            });
+        });
+}
+
+
