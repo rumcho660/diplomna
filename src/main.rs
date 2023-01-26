@@ -4,7 +4,6 @@ use bevy::app::AppExit;
 use bevy::text::Text2dBundle;
 
 
-
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 }
