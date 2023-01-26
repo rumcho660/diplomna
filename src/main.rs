@@ -25,7 +25,18 @@ fn main() {
 }
 
 
-//in one file due to problem
+
+
+
+
+
+
+
+
+
+
+
+//DUE TO PROBLEMS EVERYTHING IS IN ONE FILE
 
 #[derive(Resource)]
 struct TimerEndGame (Timer);
@@ -33,10 +44,12 @@ struct TimerEndGame (Timer);
 
 fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>){
 
-    let font = asset_server.load("Yesillow.otf");
+
+
+    let font = asset_server.load("ARCADECLASSIC.TTF");
     let text_style = TextStyle {
         font,
-        font_size: 60.0,
+        font_size: 20.0,
         color: Color::RED,
     };
 
@@ -47,8 +60,8 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
     if timer_end.0.elapsed_secs() == 1.0{
         let mut _one = commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+            text: Text::from_section("**********", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
@@ -56,34 +69,34 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
     else if timer_end.0.elapsed_secs() == 2.0{
 
-
         let mut _two = commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+            text: Text::from_section("********************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
     }
 
     else if timer_end.0.elapsed_secs() == 3.0{
+
         let mut _three = commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+            text: Text::from_section("******************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
     }
 
     else if timer_end.0.elapsed_secs() == 4.0{
         let mut _four = commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+            text: Text::from_section("****************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
     }
 
     else if timer_end.0.elapsed_secs() == 5.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut _five = commands.spawn(Text2dBundle {
+            text: Text::from_section("**************************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
@@ -91,45 +104,45 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
     else if timer_end.0.elapsed_secs() == 6.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut _6 = commands.spawn(Text2dBundle {
+            text: Text::from_section("************************************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
     }
 
     else if timer_end.0.elapsed_secs() == 7.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut _seven = commands.spawn(Text2dBundle {
+            text: Text::from_section("**********************************************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
     }
 
     else if timer_end.0.elapsed_secs() == 8.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut  _eight = commands.spawn(Text2dBundle {
+            text: Text::from_section("********************************************************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
     }
 
     else if timer_end.0.elapsed_secs() == 9.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec 9 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut _nine = commands.spawn(Text2dBundle {
+            text: Text::from_section("******************************************************************************************", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
 
     }
 
     else if timer_end.0.elapsed_secs() == 10.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec 9 sec 10 sec", text_style.clone()),
-            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
+        let mut _ten = commands.spawn(Text2dBundle {
+            text: Text::from_section("***************************************************************************************************************Game Over", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         });
         _exit.send(AppExit);
@@ -138,3 +151,39 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 }
 
+
+
+
+#[derive(Component)]
+pub struct MainMenu;
+pub struct MainGame;
+
+#[derive(Debug, Hash, Clone, Eq, PartialEq)]
+pub enum GameState {
+    MainGame,
+    MainMenu
+}
+
+pub enum MenuItem {
+    Start,
+    Quit
+}
+
+pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> , mut clear_color: ResMut<ClearColor>) {
+    //let font1 = asset_server.load("ARCADECLASSIC.TTF");
+    //let clear_color = Color:: BLACK;
+
+    commands.spawn(NodeBundle {
+            style: Style {
+                size: Size {
+                    width: Val::Percent(50.0),
+                    height: Val::Percent(50.0),
+                },
+                flex_direction: FlexDirection::ColumnReverse,
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::SpaceEvenly,
+                ..Style::default()
+            },
+            ..default()
+        });
+}
