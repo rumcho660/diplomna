@@ -20,6 +20,7 @@ fn main() {
             ..default()
         }))
         .add_startup_system(setup)
+        .add_state(GameState::MainMenu)
         .add_system(timer_til_game_end)
         .run();
 }
