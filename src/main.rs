@@ -46,40 +46,44 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
     if timer_end.0.elapsed_secs() == 1.0{
-        let one = commands.spawn(Text2dBundle {
+        let mut _one = commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
     }
 
     else if timer_end.0.elapsed_secs() == 2.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec", text_style.clone()),
+
+
+        let mut _two = commands.spawn(Text2dBundle {
+            text: Text::from_section("2 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
-
     }
 
     else if timer_end.0.elapsed_secs() == 3.0{
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("1 sec 2 sec 3 sec", text_style.clone()),
+        let mut _three = commands.spawn(Text2dBundle {
+            text: Text::from_section("3 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
-
     }
 
     else if timer_end.0.elapsed_secs() == 4.0{
-        commands.spawn(Text2dBundle {
+        let mut _four = commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
-
     }
 
     else if timer_end.0.elapsed_secs() == 5.0{
         commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
@@ -89,6 +93,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
     else if timer_end.0.elapsed_secs() == 6.0{
         commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
@@ -97,6 +102,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
     else if timer_end.0.elapsed_secs() == 7.0{
         commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
@@ -105,6 +111,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
     else if timer_end.0.elapsed_secs() == 8.0{
         commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
@@ -112,7 +119,8 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
     else if timer_end.0.elapsed_secs() == 9.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section(" 1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec 9 sec", text_style.clone()),
+            text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec 9 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
 
@@ -121,6 +129,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
     else if timer_end.0.elapsed_secs() == 10.0{
         commands.spawn(Text2dBundle {
             text: Text::from_section("1 sec 2 sec 3 sec 4 sec 5 sec 6 sec 7 sec 8 sec 9 sec 10 sec", text_style.clone()),
+            transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
         _exit.send(AppExit);
