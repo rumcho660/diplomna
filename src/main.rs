@@ -58,7 +58,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
         let mut _two = commands.spawn(Text2dBundle {
-            text: Text::from_section("2 sec", text_style.clone()),
+            text: Text::from_section("1 sec 2 sec", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
@@ -66,7 +66,7 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
     else if timer_end.0.elapsed_secs() == 3.0{
         let mut _three = commands.spawn(Text2dBundle {
-            text: Text::from_section("3 sec", text_style.clone()),
+            text: Text::from_section("1 sec 2 sec 3 sec", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 370.0, 0.0),
             ..default()
         });
