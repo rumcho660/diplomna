@@ -162,15 +162,14 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
 #[derive(Component)]
-struct MainMenu;
-struct MainGame;
+pub struct MainMenu;
+pub struct MainGame;
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
-enum GameState {
+pub enum GameState {
     MainGame,
     MainMenu
 }
-
 
 #[derive(Component, Copy, Clone)]
 pub enum MenuItem {
@@ -181,10 +180,10 @@ pub enum MenuItem {
 pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> ) {
     let font = asset_server.load("ARCADECLASSIC.TTF");
 
-    let menu_tytle_style = TextStyle {
-        font,
-        font_size: 40.0,
-        color: Color::WHITE
+    let menu_textstyle = TextStyle {
+        font: font.clone(),
+        font_size: 70.0,
+        color: Color::WHITE,
     };
 
 
@@ -207,10 +206,13 @@ pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer>
     })
         .insert(MainMenu)
         .with_children(|mut parent| {
-            parent.spawn(TextBundle {
-                text: Text::from_section("Dr. Covid", menu_tytle_style.clone()),
-                ..TextBundle::default()
+            parent.spawn(Text2dBundle {
+                text: Text::from_section("Dr. Covid", menu_textstyle.clone()),
+                ..Text2dBundle::default()
             });
+
+            spawn_button(&mut parent, font.clone(), MenuItem::Start);
+            spawn_button(&mut parent, font.clone(), MenuItem::Quit);
         });
 }
 
@@ -225,18 +227,21 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
 
     parent.spawn(ButtonBundle {
         style: Style{
-            align_items: Default::default(),
-            align_self: Default::default(),
-            align_content: Default::default(),
-            justify_content: Default::default(),
-            size: Default::default(),
+            align_items: AlignItems::Center,
+            align_self: AlignSelf::Stretch,
+            align_content: AlignContent::Center,
+            justify_content: JustifyContent::SpaceEvenly,
+            size: Size{
+                width: Val::Percent(30.0),
+                height: Val::Percent(30.0),
+            },
             ..Style::default()
         },
         ..ButtonBundle::default()
     })
         .insert(menu_item)
         .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
+            parent.spawn_bundle(Text2dBundle {
                 text: Text::from_section(
                     match menu_item {
                         MenuItem::Start => "Start",
@@ -246,7 +251,14 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
                     },button_style.clone()
 
                 ),
-                ..TextBundle::default()
+                ..Text2dBundle::default()
             });
         });
+}
+
+
+pub fn teardown_menu_items(mut commands: Commands, query: Query<Entity, With<MainMenu>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }
