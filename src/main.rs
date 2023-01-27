@@ -207,9 +207,9 @@ pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer>
     })
         .insert(MainMenu)
         .with_children(|mut parent| {
-            parent.spawn(Text2dBundle {
+            parent.spawn(TextBundle {
                 text: Text::from_section("Dr. Covid", menu_tytle_style.clone()),
-                ..Text2dBundle::default()
+                ..TextBundle::default()
             });
         });
 }
@@ -236,7 +236,7 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
     })
         .insert(menu_item)
         .with_children(|parent| {
-            parent.spawn_bundle(Text2dBundle {
+            parent.spawn_bundle(TextBundle {
                 text: Text::from_section(
                     match menu_item {
                         MenuItem::Start => "Start",
@@ -246,9 +246,7 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
                     },button_style.clone()
 
                 ),
-                ..Text2dBundle::default()
+                ..TextBundle::default()
             });
         });
 }
-
-
