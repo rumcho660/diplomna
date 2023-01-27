@@ -18,9 +18,9 @@ fn main() {
             },
             ..default()
         }))
+        .add_plugin(MenusPlugin)
         .add_startup_system(setup)
         .add_state(GameState::MainMenu)
-        //.add_system(setup_main_menu)
         .add_system(timer_til_game_end)
         .run();
 
@@ -158,9 +158,6 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
 //Menu
-
-
-
 #[derive(Component)]
 pub struct MainMenu;
 pub struct MainGame;
@@ -176,6 +173,8 @@ pub enum MenuItem {
     Start,
     Quit
 }
+
+pub struct MenusPlugin;
 
 pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> ) {
     let font = asset_server.load("ARCADECLASSIC.TTF");
@@ -217,6 +216,10 @@ pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer>
 }
 
 
+
+
+
+
 fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuItem) {
     let button_style = TextStyle{
         font,
@@ -241,7 +244,7 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
     })
         .insert(menu_item)
         .with_children(|parent| {
-            parent.spawn_bundle(Text2dBundle {
+            parent.spawn(Text2dBundle {
                 text: Text::from_section(
                     match menu_item {
                         MenuItem::Start => "Start",
@@ -257,8 +260,65 @@ fn spawn_button(parent: &mut ChildBuilder, font: Handle<Font>, menu_item: MenuIt
 }
 
 
-pub fn teardown_menu_items(mut commands: Commands, query: Query<Entity, With<MainMenu>>) {
+pub fn handle_menu_item_interactions(
+    mut app_exit_events: EventWriter<AppExit>,
+    mut app_state: ResMut<State<GameState>>,
+    query: Query<(&Interaction, &MenuItem)>,
+) {
+    query.for_each(|(interaction, item)| match interaction {
+        // Define what should happen when the buttons are clicked.
+        Interaction::Clicked => match item {
+            // When the play button is clicked, we push the `MainGame` state to
+            // start the game.
+            MenuItem::Start => {
+                app_state
+                    .push(GameState::MainGame)
+                    .map_err(|err| error!("Failed to start game: {}", err))
+                    .unwrap();
+
+            }
+            MenuItem::Quit => app_exit_events.send(AppExit),
+        },
+        Interaction::Hovered => {}
+        _ => {}
+    });
+}
+
+
+
+pub fn despawn_menu_items(mut commands: Commands, query: Query<Entity, With<MainMenu>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
+    }
+}
+
+
+impl Plugin for MenusPlugin {
+    fn build(&self, app: &mut App) {
+
+        app.add_system_set(
+            SystemSet::on_enter(GameState::MainMenu)
+                .with_system(setup_main_menu),
+        )
+
+            .add_system_set(
+                SystemSet::on_resume(GameState::MainMenu)
+                    .with_system(setup_main_menu)
+            )
+
+            .add_system_set(
+                SystemSet::on_pause(GameState::MainMenu)
+                    .with_system(despawn_menu_items)
+            )
+
+            .add_system_set(
+                SystemSet::on_exit(GameState::MainMenu)
+                    .with_system(main)
+            )
+
+            .add_system_set(
+                SystemSet::on_resume(GameState::MainMenu)
+                    .with_system(handle_menu_item_interactions)
+            );
     }
 }
