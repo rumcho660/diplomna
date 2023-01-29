@@ -2,7 +2,7 @@ use std::time::Duration;
 use bevy:: prelude::*;
 use bevy::app::AppExit;
 use bevy::text::Text2dBundle;
-
+use bevy::window::close_on_esc;
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
@@ -18,10 +18,13 @@ fn main() {
             },
             ..default()
         }))
-        .add_plugin(MenusPlugin)
+        .add_state(GameState::MainGame)
         .add_startup_system(setup)
-        .add_state(GameState::MainMenu)
-        .add_system(timer_til_game_end)
+        .add_system(close_on_esc)
+        .add_system_set(
+            SystemSet::on_update(GameState::MainGame)
+                .with_system(timer_til_game_end)
+        )
         .run();
 
 }
@@ -157,6 +160,8 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 
 
 
+
+
 //Menu
 #[derive(Component)]
 pub struct MainMenu;
@@ -272,9 +277,7 @@ pub fn handle_menu_item_interactions(
             // start the game.
             MenuItem::Start => {
                 app_state
-                    .push(GameState::MainGame)
-                    .map_err(|err| error!("Failed to start game: {}", err))
-                    .unwrap();
+                    .push(GameState::MainGame);
 
             }
             MenuItem::Quit => app_exit_events.send(AppExit),
