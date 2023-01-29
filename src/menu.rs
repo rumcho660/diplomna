@@ -22,7 +22,35 @@ pub enum MenuItem {
 
 pub struct MenusPlugin;
 
-pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> ) {
+
+pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>){
+    commands.spawn(NodeBundle{
+        style: Style{
+            size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+            justify_content: JustifyContent::Center,
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        background_color: BackgroundColor::from(Color::BLACK),
+        ..default()
+    }).insert(MainMenu)
+        .with_children(|parent|{
+            commands.spawn(TextBundle{
+                style: Default::default(),
+                text: Default::default(),
+                calculated_size: Default::default(),
+                focus_policy: Default::default(),
+                transform: Default::default(),
+                global_transform: Default::default(),
+                visibility: Default::default(),
+                computed_visibility: Default::default(),
+                z_index: Default::default(),
+                ..default()
+            });
+        });
+}
+
+/*pub fn setup_main_menu(mut commands: Commands, asset_server: ResMut<AssetServer> ) {
     let font = asset_server.load("ARCADECLASSIC.TTF");
 
     let menu_textstyle = TextStyle {
@@ -165,4 +193,4 @@ impl Plugin for MenusPlugin {
                     .with_system(handle_menu_item_interactions)
             );
     }
-}
+}*/
