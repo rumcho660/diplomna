@@ -10,7 +10,7 @@ use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
 use bevy_kira_audio::Audio;
 use bevy_kira_audio::AudioControl;
-use crate::menu::{GameState, setup_menu};
+use crate::menu::{GameState, quit_button_clicked, setup_menu, start_button_clicked};
 use crate::sound::audio_game;
 use crate::timer::{destroy_timer_el, timer_til_game_end, TimerEndGame};
 
@@ -37,6 +37,11 @@ fn main() {
         .add_system_set(
             SystemSet::on_enter(GameState::MainMenu)
                 .with_system(setup_menu)
+        )
+        .add_system_set(
+            SystemSet::on_update(GameState::MainMenu)
+                .with_system(start_button_clicked)
+                .with_system(quit_button_clicked)
         )
         .add_system_set(
             SystemSet::on_update(GameState::MainGame)
