@@ -10,7 +10,7 @@ fn setup(mut commands: Commands) {
 
 fn main() {
     App::new()
-        .insert_resource(TimerEndGame(Timer::from_seconds(10.0, TimerMode::Once)))
+        .insert_resource(TimerEndGame(Timer::from_seconds(11.0, TimerMode::Once)))
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             window: WindowDescriptor{
                 title: "Dr. Covid".to_string(),
@@ -24,6 +24,10 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(GameState::MainGame)
                 .with_system(timer_til_game_end)
+        )
+        .add_system_set(
+            SystemSet::on_enter(GameState::GameOver)
+                .with_system(destroy_timer_el)
         )
         .run();
 
@@ -46,114 +50,146 @@ fn main() {
 #[derive(Resource)]
 struct TimerEndGame (Timer);
 
+#[derive(Component)]
+struct TimerItem;
 
-fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>){
+fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<GameState>>){
 
 
 
-    let font = asset_server.load("ARCADECLASSIC.TTF");
+    let font1 = asset_server.load("ARCADECLASSIC.TTF");
+    let font2 = asset_server.load("FFFFORWA.TTF");
+
     let text_style = TextStyle {
-        font,
+        font: font1,
         font_size: 20.0,
         color: Color::RED,
     };
 
+    let text_style_over = TextStyle {
+        font: font2,
+        font_size: 90.0,
+        color: Color::BLACK,
+    };
 
 
-    timer_end.0.tick(Duration::from_secs_f32(0.01));
+
+    timer_end.0.tick(Duration::from_secs_f32(0.02));
+
 
 
     if timer_end.0.elapsed_secs() == 1.0{
-        let mut _one = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("**********", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
     else if timer_end.0.elapsed_secs() == 2.0{
 
-        let mut _two = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("********************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
     }
 
     else if timer_end.0.elapsed_secs() == 3.0{
 
-        let mut _three = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("******************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
     }
 
     else if timer_end.0.elapsed_secs() == 4.0{
-        let mut _four = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("****************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
     }
 
     else if timer_end.0.elapsed_secs() == 5.0{
-        let mut _five = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("**************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
 
     else if timer_end.0.elapsed_secs() == 6.0{
-        let mut _6 = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("************************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
     else if timer_end.0.elapsed_secs() == 7.0{
-        let mut _seven = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("**********************************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
     else if timer_end.0.elapsed_secs() == 8.0{
-        let mut  _eight = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("********************************************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
     else if timer_end.0.elapsed_secs() == 9.0{
-        let mut _nine = commands.spawn(Text2dBundle {
+        commands.spawn(Text2dBundle {
             text: Text::from_section("******************************************************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
-        });
+        }).insert(TimerItem);
 
     }
 
     else if timer_end.0.elapsed_secs() == 10.0{
-        let mut _ten = commands.spawn(Text2dBundle {
-            text: Text::from_section("***************************************************************************************************************Game Over", text_style.clone()),
+        commands.spawn(Text2dBundle {
+            text: Text::from_section("*************************************************************************************************************************", text_style.clone()),
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
+        }).insert(TimerItem);
+
+
+
+
+    }
+    else if timer_end.0.elapsed_secs() == 11.0{
+        app_state.push(GameState::GameOver);
+        commands.spawn(Text2dBundle {
+            text: Text::from_section("Time ran out\n
+            Try agan by restarting the game", text_style_over.clone()),
+            transform: Transform::from_xyz(-200.0, 0.0, 0.0),
+            ..default()
         });
-        _exit.send(AppExit);
+
+
+
     }
 
 
+}
+
+fn destroy_timer_el(mut commands: Commands, query: Query<Entity, With<TimerItem>>){
+    for timer in query.iter() {
+        commands.entity(timer).despawn_recursive();
+    }
 }
 
 
@@ -166,11 +202,13 @@ fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWrite
 #[derive(Component)]
 pub struct MainMenu;
 pub struct MainGame;
+pub struct GameOver;
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
 pub enum GameState {
     MainGame,
-    MainMenu
+    MainMenu,
+    GameOver
 }
 
 #[derive(Component, Copy, Clone)]
