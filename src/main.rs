@@ -1,6 +1,7 @@
 mod menu;
 mod timer;
 mod sound;
+mod player;
 
 use std::time::Duration;
 use bevy:: prelude::*;
@@ -11,6 +12,7 @@ use bevy_kira_audio::AudioPlugin;
 use bevy_kira_audio::Audio;
 use bevy_kira_audio::AudioControl;
 use crate::menu::{GameState, quit_button_clicked, setup_menu, start_button_clicked};
+use crate::player::spawn_player;
 use crate::sound::audio_game;
 use crate::timer::{destroy_timer_el, timer_til_game_end, TimerEndGame};
 
@@ -45,6 +47,7 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(GameState::MainGame)
+                .with_system(spawn_player)
                 .with_system(timer_til_game_end)
         )
         .add_system_set(
