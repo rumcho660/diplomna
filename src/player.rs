@@ -25,24 +25,27 @@ pub struct Position{
 
 
 
+#[derive(Component, Deref, DerefMut)]
+pub struct AnimationTimer(Timer);
 
 
 
-pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>){
-    let sprite = asset_server.load("Doctor_Covid3.png");
+
+pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+    let texture_handle = asset_server.load("doctor_covid_animated.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
 
-    commands.spawn(SpriteBundle {
-            texture: sprite.clone(),
-            sprite: Sprite {
-                color: Default::default(),
-                flip_x: false,
-                flip_y: false,
-                custom_size: Option::from((Vec2::new(100.0, 100.0))),
-                ..default()
-            },
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle,
+            transform: Transform::from_scale(Vec3::splat(2.0)),
             ..default()
-        }).insert(Player);
+        },
+        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Player);
 }
 
 
@@ -52,25 +55,56 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>) {
+pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
     for mut _transform in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             position.x += 1.0 * TIME_STEP * SPEED;
-
+            for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
+                timer.tick(time.delta());
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
+            }
         }
 
         if keyboard_input.pressed(KeyCode::A) {
             position.x -= 1.0 * TIME_STEP * SPEED;
+
+            for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
+                timer.tick(time.delta());
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
+            }
 
         }
 
         if keyboard_input.pressed(KeyCode::W) {
             position.y += 1.0 * TIME_STEP * SPEED;
 
+            for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
+                timer.tick(time.delta());
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
+            }
+
         }
 
         if keyboard_input.pressed(KeyCode::S) {
             position.y -= 1.0 * TIME_STEP * SPEED;
+
+
+            for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
+                timer.tick(time.delta());
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
+            }
 
         }
 

@@ -32,14 +32,15 @@ fn main() {
                 ..default()
             },
             ..default()
-        }))
+        })
+            .set(ImagePlugin::default_nearest()))
         .add_state(GameState::GameStory)
+        .add_startup_system(setup_camera)
         .add_plugin(AudioPlugin)
         .add_plugin(GameStoryPlugin)
         .add_plugin(MenusPlugin)
         .add_plugin(TimerPlugin)
         .add_plugin(PlayerPlugin)
-        .add_startup_system(setup_camera)
         .add_startup_system(audio_game)
         .add_system(close_on_esc)
         .run();
