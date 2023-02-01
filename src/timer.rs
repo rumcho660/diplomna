@@ -9,6 +9,9 @@ pub struct TimerEndGame (pub Timer);
 #[derive(Component)]
 pub struct TimerItem;
 
+#[derive(Component)]
+pub struct TimerPlugin;
+
 pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<GameState>>){
 
 
@@ -147,3 +150,15 @@ pub fn destroy_timer_el(mut commands: Commands, query: Query<Entity, With<TimerI
         commands.entity(timer).despawn_recursive();
     }
 }
+
+
+impl Plugin for TimerPlugin{
+    fn build(&self, app: &mut App) {
+        app.add_system_set(SystemSet::on_update(GameState::MainGame)
+            .with_system(timer_til_game_end))
+            .add_system_set(SystemSet::on_enter(GameState::GameOver)
+                .with_system(destroy_timer_el));
+    }
+}
+
+

@@ -1,6 +1,5 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
-use crate::main;
 
 #[derive(Component)]
 pub struct MainMenu;
@@ -12,11 +11,11 @@ pub struct MainGame;
 pub struct GameOver;
 
 #[derive(Component)]
-pub struct Start;
+pub struct StartButton;
 
 
 #[derive(Component)]
-pub struct Quit;
+pub struct QuitButton;
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
 pub enum GameState {
@@ -26,13 +25,13 @@ pub enum GameState {
 }
 
 
-
+#[derive(Component)]
 pub struct MenusPlugin;
 
 
 pub(crate) fn start_button_clicked(
     mut commands: Commands,
-    interactions: Query<&Interaction, (With<Start>, Changed<Interaction>)>,
+    interactions: Query<&Interaction, (With<StartButton>, Changed<Interaction>)>,
     menu_root: Query<Entity, With<MainMenu>>,
     mut game_state: ResMut<State<GameState>>,
 ) {
@@ -47,7 +46,7 @@ pub(crate) fn start_button_clicked(
 }
 
 pub(crate) fn quit_button_clicked(
-    interactions: Query<&Interaction, (With<Quit>, Changed<Interaction>)>,
+    interactions: Query<&Interaction, (With<QuitButton>, Changed<Interaction>)>,
     mut exit: EventWriter<AppExit>,
 ) {
     for interaction in &interactions {
@@ -61,10 +60,10 @@ pub(crate) fn quit_button_clicked(
 
 pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>){
     let start_button1 = spawn_button(&mut commands, &asset_server, "Start", Color::BLACK);
-    commands.entity(start_button1).insert(Start);
+    commands.entity(start_button1).insert(StartButton);
 
     let start_button2 = spawn_button(&mut commands, &asset_server, "Quit", Color::BLACK);
-    commands.entity(start_button2).insert(Quit);
+    commands.entity(start_button2).insert(QuitButton);
 
 
     let font_menu = asset_server.load("FFFFORWA.TTF");
@@ -140,3 +139,16 @@ pub fn spawn_button(commands: &mut Commands, asset_server: &AssetServer, text: &
     })
         .id()
 }
+
+
+impl Plugin for MenusPlugin{
+    fn build(&self, app: &mut App) {
+        app.add_system_set(SystemSet::on_enter(GameState::MainMenu)
+            .with_system(setup_menu))
+            .add_system_set(SystemSet::on_update(GameState::MainMenu)
+                .with_system(start_button_clicked)
+                .with_system(quit_button_clicked));
+    }
+}
+
+
