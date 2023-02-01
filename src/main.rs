@@ -2,6 +2,7 @@ mod menu;
 mod timer;
 mod sound;
 mod player;
+mod gamestory;
 
 use bevy:: prelude::*;
 use bevy::app::AppExit;
@@ -10,6 +11,7 @@ use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
 use bevy_kira_audio::Audio;
 use bevy_kira_audio::AudioControl;
+use crate::gamestory::GameStoryPlugin;
 use crate::menu::{GameState, MenusPlugin, quit_button_clicked, setup_menu, start_button_clicked};
 use crate::player::{PlayerPlugin, Position, spawn_player};
 use crate::sound::audio_game;
@@ -31,8 +33,9 @@ fn main() {
             },
             ..default()
         }))
-        .add_state(GameState::MainMenu)
+        .add_state(GameState::GameStory)
         .add_plugin(AudioPlugin)
+        .add_plugin(GameStoryPlugin)
         .add_plugin(MenusPlugin)
         .add_plugin(TimerPlugin)
         .add_plugin(PlayerPlugin)

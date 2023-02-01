@@ -1,6 +1,10 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
 
+
+#[derive(Component)]
+pub struct GameStory;
+
 #[derive(Component)]
 pub struct MainMenu;
 
@@ -19,6 +23,7 @@ pub struct QuitButton;
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
 pub enum GameState {
+    GameStory,
     MainGame,
     MainMenu,
     GameOver
