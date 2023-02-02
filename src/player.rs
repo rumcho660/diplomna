@@ -16,6 +16,13 @@ pub struct PlayerPlugin;
 #[derive(Component)]
 pub struct Player;
 
+
+#[derive(Component)]
+pub struct Syringe;
+
+#[derive(Component)]
+pub struct Velosity{x: f32, y: f32}
+
 #[derive(Resource)]
 pub struct Position{
     pub x: f32,
@@ -45,7 +52,8 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
             ..default()
         },
         AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Player);
+    )).insert(Player)
+        .insert(Velosity{x: 0.0, y: 0.0});
 }
 
 
@@ -115,8 +123,67 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
 }
 
 
-pub fn player_attack(){
+pub fn player_shoot(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands, mut position: ResMut<Position>){
+    let laser_sprite  = asset_server.load("Syringe.png");
 
+
+    for player_pos in query_player.iter(){
+        if keyboard_input.just_pressed(KeyCode::Right) {
+            let x = player_pos.translation.x;
+            let y = player_pos.translation.y;
+
+
+
+            commands.spawn(SpriteBundle {
+                texture: laser_sprite.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y, 0.0),
+                    scale: Vec3::new(6.0, 6.0, 0.0),
+                    ..default()
+                },
+                ..default()
+            }).insert(Syringe)
+                .insert(Velosity{x: 1.0 , y: 0.0});
+
+        }
+
+
+
+        if keyboard_input.just_pressed(KeyCode::Left) {
+            let x = player_pos.translation.x;
+            let y = player_pos.translation.y;
+
+
+            commands.spawn(SpriteBundle {
+                texture: laser_sprite.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y, 0.0),
+                    scale: Vec3::new(6.0, 6.0, 0.0),
+                    ..default()
+
+                },
+                ..default()
+            }).insert(Syringe)
+                .insert(Velosity{x: -1.0 , y: 0.0});
+        }
+    }
+}
+
+
+pub fn movable(mut query: Query<(Entity, &Velosity, &mut Transform)>) {
+    for (entity, velocity, mut transform) in query.iter_mut() {
+        let mut translation = &mut transform.translation;
+        translation.x += velocity.x * TIME_STEP * SPEED;
+        translation.y += velocity.y * TIME_STEP * SPEED;
+    }
+}
+
+
+
+pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syringe>>){
+    for syringes in query.iter(){
+        commands.entity(syringes).despawn_recursive();
+    }
 }
 
 impl Plugin for PlayerPlugin  {
@@ -124,9 +191,11 @@ impl Plugin for PlayerPlugin  {
         app.add_system_set(SystemSet::on_enter(GameState::MainGame)
                 .with_system(spawn_player))
             .add_system_set(SystemSet::on_update(GameState::MainGame)
+                .with_system(player_shoot)
                 .with_system(move_player)
-                .with_system(player_attack))
+                .with_system(movable))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
-                .with_system(despawn_player));
+                .with_system(despawn_player)
+                .with_system(despawn_syringes));
     }
 }
