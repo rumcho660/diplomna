@@ -4,10 +4,10 @@ use bevy::transform::TransformSystem;
 use crate::menu::GameState;
 
 
-const TIME_STEP: f32 = 1.0/60.0;
-const SPEED: f32 = 200.0;
+const TIME_STEP_PLAYER: f32 = 1.0/60.0;
+const SPEED_PLAYER: f32 = 200.0;
 
-
+const SPEED_SYRINGE: f32 = 50.0;
 
 #[derive(Component)]
 pub struct PlayerPlugin;
@@ -66,7 +66,7 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
 pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
     for mut _transform in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
-            position.x += 1.0 * TIME_STEP * SPEED;
+            position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
                 if timer.just_finished() {
@@ -77,7 +77,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
         }
 
         if keyboard_input.pressed(KeyCode::A) {
-            position.x -= 1.0 * TIME_STEP * SPEED;
+            position.x -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -90,7 +90,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
         }
 
         if keyboard_input.pressed(KeyCode::W) {
-            position.y += 1.0 * TIME_STEP * SPEED;
+            position.y += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -103,7 +103,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
         }
 
         if keyboard_input.pressed(KeyCode::S) {
-            position.y -= 1.0 * TIME_STEP * SPEED;
+            position.y -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
@@ -123,9 +123,11 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
 }
 
 
-pub fn player_shoot(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands, mut position: ResMut<Position>){
-    let laser_sprite  = asset_server.load("Syringe.png");
-
+pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands, mut position: ResMut<Position>){
+    let syringe_right  = asset_server.load("Syringe_right.png");
+    let syringe_left  = asset_server.load("Syringe_left.png");
+    let syringe_up  = asset_server.load("Syringe_up.png");
+    let syringe_down  = asset_server.load("Syringe_down.png");
 
     for player_pos in query_player.iter(){
         if keyboard_input.just_pressed(KeyCode::Right) {
@@ -135,7 +137,7 @@ pub fn player_shoot(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Tr
 
 
             commands.spawn(SpriteBundle {
-                texture: laser_sprite.clone(),
+                texture: syringe_right.clone(),
                 transform: Transform {
                     translation: Vec3::new(x, y, 0.0),
                     scale: Vec3::new(6.0, 6.0, 0.0),
@@ -155,7 +157,7 @@ pub fn player_shoot(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Tr
 
 
             commands.spawn(SpriteBundle {
-                texture: laser_sprite.clone(),
+                texture: syringe_left.clone(),
                 transform: Transform {
                     translation: Vec3::new(x, y, 0.0),
                     scale: Vec3::new(6.0, 6.0, 0.0),
@@ -166,15 +168,57 @@ pub fn player_shoot(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Tr
             }).insert(Syringe)
                 .insert(Velosity{x: -1.0 , y: 0.0});
         }
+
+
+
+        if keyboard_input.just_pressed(KeyCode::Up) {
+            let x = player_pos.translation.x;
+            let y = player_pos.translation.y;
+
+
+
+            commands.spawn(SpriteBundle {
+                texture: syringe_up.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y, 0.0),
+                    scale: Vec3::new(6.0, 6.0, 0.0),
+                    ..default()
+                },
+                ..default()
+            }).insert(Syringe)
+                .insert(Velosity{x: 0.0 , y: 1.0});
+
+        }
+
+
+
+        if keyboard_input.just_pressed(KeyCode::Down) {
+            let x = player_pos.translation.x;
+            let y = player_pos.translation.y;
+
+
+
+            commands.spawn(SpriteBundle {
+                texture: syringe_down.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y, 0.0),
+                    scale: Vec3::new(6.0, 6.0, 0.0),
+                    ..default()
+                },
+                ..default()
+            }).insert(Syringe)
+                .insert(Velosity{x: 0.0 , y: -1.0});
+
+        }
     }
 }
 
 
-pub fn movable(mut query: Query<(Entity, &Velosity, &mut Transform)>) {
+pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
-        translation.x += velocity.x * TIME_STEP * SPEED;
-        translation.y += velocity.y * TIME_STEP * SPEED;
+        translation.x += velocity.x * SPEED_SYRINGE;
+        translation.y += velocity.y * SPEED_SYRINGE;
     }
 }
 
@@ -189,11 +233,11 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainGame)
-                .with_system(spawn_player))
+            .with_system(spawn_player))
             .add_system_set(SystemSet::on_update(GameState::MainGame)
-                .with_system(player_shoot)
+                .with_system(control_direction_syringe)
                 .with_system(move_player)
-                .with_system(movable))
+                .with_system(moving_syringes))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_player)
                 .with_system(despawn_syringes));
