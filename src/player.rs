@@ -21,7 +21,8 @@ pub struct Player;
 pub struct Syringe;
 
 #[derive(Component)]
-pub struct Velosity{x: f32, y: f32}
+pub struct Velosity{
+    pub(crate) x: f32, pub(crate) y: f32}
 
 #[derive(Resource)]
 pub struct Position{
