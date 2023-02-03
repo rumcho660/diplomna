@@ -34,7 +34,7 @@ pub struct Position{
 
 
 #[derive(Component, Deref, DerefMut)]
-pub struct AnimationTimer(Timer);
+pub struct AnimationTimerPlayer(Timer);
 
 
 
@@ -52,7 +52,7 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
             transform: Transform::from_scale(Vec3::splat(3.5)),
             ..default()
         },
-        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+        AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
         .insert(Velosity{x: 0.0, y: 0.0});
 }
@@ -64,7 +64,7 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
+pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
     for mut _transform in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;

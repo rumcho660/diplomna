@@ -10,23 +10,25 @@ pub struct Enemy;
 #[derive(Component)]
 pub struct EnemyPlugin;
 
-pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>){
-    let enemy = asset_server.load("Covid_enemy1.png");
+
+#[derive(Component, Deref, DerefMut)]
+pub struct AnimationTimerEnemy(Timer);
+
+pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+    let texture_handle = asset_server.load("Enemy_final.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
 
-    commands.spawn(SpriteBundle {
-        texture: enemy.clone(),
-        sprite: Sprite {
-            color: Default::default(),
-            flip_x: false,
-            flip_y: false,
-            custom_size: Option::from((Vec2::new(100.0, 100.0))),
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle,
+            transform: Transform::from_scale(Vec3::splat(3.5)),
             ..default()
         },
-        transform: Transform::from_xyz(0., 300., 0.),
-        ..default()
-    })
-        .insert(Enemy)
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
         .insert(Velosity{x: 0.0, y: 0.0});
 }
 
@@ -37,44 +39,48 @@ pub fn despawn_enemy(mut commands: Commands, mut query: Query<Entity, With<Enemy
     }
 }
 
-pub fn enemy_movement (start_point: Vec3, end_point: Vec3) -> Vec3 {
-    let mut direction = Vec3::new(0., 0., 0.);
 
-    if start_point.x > end_point.x {
-        direction += Vec3::new(-1.0, 0., 0.);
-    }
 
-    if start_point.x < end_point.x {
-        direction += Vec3::new(1.0, 0., 0.);
-    }
-
-    if start_point.y > end_point.y {
-        direction += Vec3::new(0., -1.0, 0.);
-    }
-
-    if start_point.y < end_point.y {
-        direction += Vec3::new(0., 1.0, 0.);
-    }
-
-    if start_point.y == end_point.y && start_point.x == end_point.x{
-
-    }
-
-    return direction;
-}
-
-pub fn move_enemy(mut query: Query<(&mut Transform), (With<Enemy>, Without<Player>)>,
+pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>, Without<Player>)>,
                   player_query: Query<&Transform, (With<Player>, Without<Enemy>)>,
-                  mut app_state: ResMut<State<GameState>>) {
-    for (mut enemy_pos) in query.iter_mut() {
+                  time: Res<Time>,
+                  texture_atlases: Res<Assets<TextureAtlas>>,
+                  mut query_animation: Query<(&mut AnimationTimerEnemy, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+
+    for (mut velocity, mut enemy_pos) in query.iter_mut() {
         for player_pos in player_query.iter() {
 
-            let direction = enemy_movement(enemy_pos.translation, player_pos.translation);
+            if enemy_pos.translation.x > player_pos.translation.x {
+                velocity.x = -0.01;
+            }
+
+            if enemy_pos.translation.x < player_pos.translation.x {
+                velocity.x = 0.01;
+            }
+
+            if enemy_pos.translation.y > player_pos.translation.y {
+                velocity.y = -0.01;
+            }
+
+            if enemy_pos.translation.y < player_pos.translation.y {
+                velocity.y = 0.01;
+            }
+
+
+            for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
+                timer.tick(time.delta());
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
+            }
+
             let mut translation = &mut enemy_pos.translation;
 
 
-            translation.x += direction.x * 2.0;
-            translation.y += direction.y * 2.0;
+            translation.x += velocity.x * 20.0;
+            translation.y += velocity.y * 20.0;
+
         }
 
     }
