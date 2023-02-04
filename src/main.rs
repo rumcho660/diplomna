@@ -19,6 +19,11 @@ use crate::player::{PlayerPlugin, Position, spawn_player};
 use crate::sound::audio_game;
 use crate::timer::{destroy_timer_el, timer_til_game_end, TimerEndGame, TimerPlugin};
 
+const WINDOW_HEIGHT:f32 = 1080.0;
+const WINDOW_WIDTH:f32 = 1920.0;
+const MARGIN: f32 = 200.;
+
+
 
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
@@ -31,6 +36,8 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             window: WindowDescriptor{
                 title: "Dr. Covid".to_string(),
+                width: WINDOW_WIDTH,
+                height: WINDOW_HEIGHT,
                 ..default()
             },
             ..default()

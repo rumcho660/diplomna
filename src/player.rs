@@ -1,6 +1,9 @@
 use bevy::prelude::*;
+use bevy::sprite::collide_aabb::collide;
 use bevy::transform;
 use bevy::transform::TransformSystem;
+use crate::{MARGIN, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::enemy::Enemy;
 use crate::menu::GameState;
 
 
@@ -8,6 +11,11 @@ const TIME_STEP_PLAYER: f32 = 1.0/60.0;
 const SPEED_PLAYER: f32 = 200.0;
 
 const SPEED_SYRINGE: f32 = 50.0;
+
+
+const SPRITE_ENEMY_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+const SPRITE_PlAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 #[derive(Component)]
 pub struct PlayerPlugin;
@@ -215,11 +223,19 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 }
 
 
-pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>) {
+pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
         translation.x += velocity.x * SPEED_SYRINGE;
         translation.y += velocity.y * SPEED_SYRINGE;
+
+        if translation.y > WINDOW_HEIGHT / 2. + 100.0
+            || translation.y < -WINDOW_HEIGHT / 2. - 100.0
+            || translation.x > WINDOW_WIDTH / 2. + 100.0
+            || translation.x < -WINDOW_WIDTH / 2. - 100.0{
+            commands.entity(entity).despawn();
+        }
+
     }
 }
 
@@ -231,6 +247,32 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
     }
 }
 
+
+
+pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>, query_enemy: Query<(Entity, &Transform), With<Enemy>> ){
+
+    for (syringe, transform_syringe) in query_syringe.iter(){
+        let syringe_scale = Vec2::from(transform_syringe.scale.xy());
+
+        for (enemy, transform_enemy) in query_enemy.iter()  {
+            let enemy_scale = Vec2::from(transform_enemy.scale.xy());
+
+            let collide = collide(
+                transform_syringe.translation,
+                SPRITE_SYRINGE_SIZE * syringe_scale,
+                transform_enemy.translation,
+                SPRITE_ENEMY_SIZE * enemy_scale,
+            );
+
+
+            if let Some(_) = collide{
+                commands.entity(enemy).despawn();
+                commands.entity(syringe).despawn();
+            }
+        }
+    }
+}
+
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainGame)
@@ -238,7 +280,8 @@ impl Plugin for PlayerPlugin  {
             .add_system_set(SystemSet::on_update(GameState::MainGame)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
-                .with_system(moving_syringes))
+                .with_system(moving_syringes)
+                .with_system(syringe_hit))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_player)
                 .with_system(despawn_syringes));

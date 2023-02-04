@@ -1,4 +1,5 @@
 use bevy:: prelude::*;
+use bevy::sprite::collide_aabb::Collision;
 use crate::menu::GameState;
 use crate::player::{Player, Velosity};
 
@@ -13,6 +14,12 @@ pub struct EnemyPlugin;
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimerEnemy(Timer);
+
+
+
+pub fn collision_with_player(layer: Collision){
+
+}
 
 pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     let texture_handle = asset_server.load("Enemy_final.png");
