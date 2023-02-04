@@ -9,13 +9,15 @@ use bevy::math::Vec3Swizzles;
 #[derive(Component)]
 pub struct Enemy;
 
+#[derive(Component)]
+pub struct EnemyDefeat;
 
 #[derive(Component)]
 pub struct EnemyPlugin;
 
 
 #[derive(Component, Deref, DerefMut)]
-pub struct AnimationTimerEnemy(Timer);
+pub struct AnimationTimerEnemy(pub Timer);
 
 
 
@@ -119,10 +121,18 @@ pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transf
 
             if let Some(_) = collide{
                 commands.entity(player).despawn();
+
             }
         }
     }
 }
+
+pub fn despawn_enemy_defeat(mut commands: Commands, mut query: Query<Entity, With<EnemyDefeat>>){
+    for enemy_defeat in query.iter_mut(){
+        commands.entity(enemy_defeat).despawn();
+    }
+}
+
 
 
 impl Plugin for EnemyPlugin {
@@ -133,6 +143,8 @@ impl Plugin for EnemyPlugin {
             .with_system(move_enemy)
             .with_system(enemy_attack))
         .add_system_set(SystemSet::on_enter(GameState::GameOver)
-            .with_system(despawn_enemy));
+            .with_system(despawn_enemy)
+            .with_system(despawn_enemy_defeat));
+
     }
 }
