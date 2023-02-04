@@ -23,6 +23,9 @@ const WINDOW_HEIGHT:f32 = 1080.0;
 const WINDOW_WIDTH:f32 = 1920.0;
 const MARGIN: f32 = 200.;
 
+pub const SPRITE_ENEMY_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+pub const SPRITE_PlAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+pub const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 
 fn setup_camera(mut commands: Commands) {

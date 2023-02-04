@@ -2,9 +2,11 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use bevy::transform;
 use bevy::transform::TransformSystem;
-use crate::{MARGIN, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{MARGIN, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use crate::menu::GameState;
+use bevy::math::Vec3Swizzles;
+
 
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
@@ -12,10 +14,6 @@ const SPEED_PLAYER: f32 = 200.0;
 
 const SPEED_SYRINGE: f32 = 50.0;
 
-
-const SPRITE_ENEMY_SIZE: Vec2 = Vec2::new(32.0, 32.0);
-const SPRITE_PlAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
-const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 #[derive(Component)]
 pub struct PlayerPlugin;
@@ -272,6 +270,8 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transf
         }
     }
 }
+
+
 
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {

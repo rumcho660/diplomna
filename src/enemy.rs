@@ -1,7 +1,9 @@
 use bevy:: prelude::*;
-use bevy::sprite::collide_aabb::Collision;
+use bevy::sprite::collide_aabb::{collide, Collision};
 use crate::menu::GameState;
 use crate::player::{Player, Velosity};
+use crate::{SPRITE_ENEMY_SIZE, SPRITE_PlAYER_SIZE};
+use bevy::math::Vec3Swizzles;
 
 
 #[derive(Component)]
@@ -31,7 +33,11 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle,
-            transform: Transform::from_scale(Vec3::splat(3.5)),
+            transform: Transform{
+                translation: Vec3::new(200.0, 100.0, 0.0),
+                scale: Vec3::splat(3.5),
+                ..default()
+            },
             ..default()
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
@@ -94,12 +100,38 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 }
 
 
+
+pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(Entity, &Transform), With<Enemy>> ){
+
+    for (player, transform_player) in query_player.iter(){
+        let player_scale = Vec2::from(transform_player.scale.xy());
+
+        for (enemy, transform_enemy) in query_enemy.iter()  {
+            let enemy_scale = Vec2::from(transform_enemy.scale.xy());
+
+            let collide = collide(
+                transform_player.translation,
+                SPRITE_PlAYER_SIZE * player_scale,
+                transform_enemy.translation,
+                SPRITE_ENEMY_SIZE * enemy_scale,
+            );
+
+
+            if let Some(_) = collide{
+                commands.entity(player).despawn();
+            }
+        }
+    }
+}
+
+
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainGame)
             .with_system(spawn_enemy))
         .add_system_set(SystemSet::on_update(GameState::MainGame)
-            .with_system(move_enemy))
+            .with_system(move_enemy)
+            .with_system(enemy_attack))
         .add_system_set(SystemSet::on_enter(GameState::GameOver)
             .with_system(despawn_enemy));
     }
