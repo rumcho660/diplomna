@@ -20,9 +20,6 @@ pub struct AnimationTimerEnemy(pub Timer);
 
 
 
-pub fn collision_with_player(layer: Collision){
-
-}
 
 pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     let texture_handle = asset_server.load("Enemy_final.png");
@@ -39,7 +36,9 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
                 scale: Vec3::splat(3.5),
                 ..default()
             },
+            visibility: Visibility::VISIBLE,
             ..default()
+                
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Enemy)
@@ -126,12 +125,6 @@ pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transf
     }
 }
 
-pub fn despawn_enemy_defeat(mut commands: Commands, mut query: Query<Entity, With<EnemyDefeat>>){
-    for enemy_defeat in query.iter_mut(){
-        commands.entity(enemy_defeat).despawn();
-    }
-}
-
 
 
 impl Plugin for EnemyPlugin {
@@ -147,8 +140,7 @@ impl Plugin for EnemyPlugin {
             .with_system(move_enemy)
             .with_system(enemy_attack))
         .add_system_set(SystemSet::on_enter(GameState::GameOver)
-            .with_system(despawn_enemy)
-            .with_system(despawn_enemy_defeat));
+            .with_system(despawn_enemy));
 
 
     }

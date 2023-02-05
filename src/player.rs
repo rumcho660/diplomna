@@ -220,7 +220,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 }
 
 
-pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands) {
+pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands, mut app_state: ResMut<State<GameState>> ) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
         let mut current_room = 0;
@@ -230,9 +230,11 @@ pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mu
         if translation.y > WINDOW_HEIGHT / 2. + 100.0
             || translation.y < -WINDOW_HEIGHT / 2. - 100.0
             || translation.x > WINDOW_WIDTH / 2. + 100.0
-            || translation.x < -WINDOW_WIDTH / 2. - 100.0 {
+            || translation.x < -WINDOW_WIDTH / 2. - 100.0 && current_room == 0{
+
+            app_state.set(GameState::Room1);
             commands.entity(entity).despawn();
-            println!("despawn");
+
         }
 
     }
@@ -248,7 +250,7 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
 
 
 
-pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>, query_enemy: Query<(Entity, &Transform), With<Enemy>> ){
+pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>, query_enemy: Query<(Entity, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
 
     for (syringe, transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
@@ -267,6 +269,8 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transf
             if let Some(_) = collide{
                 commands.entity(enemy).despawn();
                 commands.entity(syringe).despawn();
+
+                app_state.set(GameState::Room2);
             }
         }
     }
@@ -283,6 +287,16 @@ impl Plugin for PlayerPlugin  {
                 .with_system(move_player)
                 .with_system(moving_syringes)
                 .with_system(syringe_hit))
+            .add_system_set(SystemSet::on_update(GameState::Room1)
+                .with_system(control_direction_syringe)
+                .with_system(move_player)
+                .with_system(moving_syringes)
+                .with_system(syringe_hit))
+            .add_system_set(SystemSet::on_update(GameState::Room2)
+            .with_system(control_direction_syringe)
+            .with_system(move_player)
+            .with_system(moving_syringes)
+            .with_system(syringe_hit))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_player)
                 .with_system(despawn_syringes));
