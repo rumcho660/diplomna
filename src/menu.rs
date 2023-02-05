@@ -1,5 +1,6 @@
 use bevy::app::AppExit;
 use bevy::prelude::*;
+use crate::GameState;
 
 
 #[derive(Component)]
@@ -21,13 +22,7 @@ pub struct StartButton;
 #[derive(Component)]
 pub struct QuitButton;
 
-#[derive(Debug, Hash, Clone, Eq, PartialEq)]
-pub enum GameState {
-    GameStory,
-    MainGame,
-    MainMenu,
-    GameOver
-}
+
 
 
 #[derive(Component)]
@@ -45,7 +40,7 @@ pub(crate) fn start_button_clicked(
             let root_entity = menu_root.single();
             commands.entity(root_entity).despawn_recursive();
 
-            game_state.set(GameState::MainGame).unwrap();
+            game_state.set(GameState::MainRoom).unwrap();
         }
     }
 }

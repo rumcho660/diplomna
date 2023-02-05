@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioControl};
-use crate::menu::GameState;
-use crate::menu::GameState::GameOver;
+
 
 pub fn audio_game(audio: Res<Audio>,  asset_server: Res<AssetServer>){
 

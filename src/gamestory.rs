@@ -1,5 +1,6 @@
 use bevy:: prelude::*;
-use crate::menu::GameState;
+use crate::GameState;
+
 
 #[derive(Component)]
 pub struct Story;

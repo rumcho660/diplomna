@@ -154,10 +154,14 @@ pub fn destroy_timer_el(mut commands: Commands, query: Query<Entity, With<TimerI
 
 impl Plugin for TimerPlugin{
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_update(GameState::MainGame)
+        app.add_system_set(SystemSet::on_update(GameState::MainRoom)
             .with_system(timer_til_game_end))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
-                .with_system(destroy_timer_el));
+                .with_system(destroy_timer_el))
+        .add_system_set(SystemSet::on_update(GameState::Room1)
+            .with_system(timer_til_game_end))
+        .add_system_set(SystemSet::on_update(GameState::Room2)
+            .with_system(timer_til_game_end));
     }
 }
 

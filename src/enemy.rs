@@ -1,8 +1,7 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide, Collision};
-use crate::menu::GameState;
 use crate::player::{Player, Velosity};
-use crate::{SPRITE_ENEMY_SIZE, SPRITE_PlAYER_SIZE};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PlAYER_SIZE};
 use bevy::math::Vec3Swizzles;
 
 
@@ -137,14 +136,20 @@ pub fn despawn_enemy_defeat(mut commands: Commands, mut query: Query<Entity, Wit
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::MainGame)
+        app.add_system_set(SystemSet::on_enter(GameState::Room1)
             .with_system(spawn_enemy))
-        .add_system_set(SystemSet::on_update(GameState::MainGame)
+        .add_system_set(SystemSet::on_update(GameState::Room1)
+            .with_system(move_enemy)
+            .with_system(enemy_attack))
+        .add_system_set(SystemSet::on_enter(GameState::Room2)
+            .with_system(spawn_enemy))
+        .add_system_set(SystemSet::on_update(GameState::Room2)
             .with_system(move_enemy)
             .with_system(enemy_attack))
         .add_system_set(SystemSet::on_enter(GameState::GameOver)
             .with_system(despawn_enemy)
             .with_system(despawn_enemy_defeat));
+
 
     }
 }

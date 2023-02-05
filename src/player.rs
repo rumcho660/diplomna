@@ -2,9 +2,8 @@ use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use bevy::transform;
 use bevy::transform::TransformSystem;
-use crate::{MARGIN, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, MARGIN, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
-use crate::menu::GameState;
 use bevy::math::Vec3Swizzles;
 
 
@@ -224,14 +223,16 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
+        let mut current_room = 0;
         translation.x += velocity.x * SPEED_SYRINGE;
         translation.y += velocity.y * SPEED_SYRINGE;
 
         if translation.y > WINDOW_HEIGHT / 2. + 100.0
             || translation.y < -WINDOW_HEIGHT / 2. - 100.0
             || translation.x > WINDOW_WIDTH / 2. + 100.0
-            || translation.x < -WINDOW_WIDTH / 2. - 100.0{
+            || translation.x < -WINDOW_WIDTH / 2. - 100.0 {
             commands.entity(entity).despawn();
+            println!("despawn");
         }
 
     }
@@ -275,9 +276,9 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transf
 
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::MainGame)
+        app.add_system_set(SystemSet::on_enter(GameState::MainRoom)
             .with_system(spawn_player))
-            .add_system_set(SystemSet::on_update(GameState::MainGame)
+            .add_system_set(SystemSet::on_update(GameState::MainRoom)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
                 .with_system(moving_syringes)
