@@ -8,8 +8,6 @@ use bevy::math::Vec3Swizzles;
 #[derive(Component)]
 pub struct Enemy;
 
-#[derive(Component)]
-pub struct EnemyDefeat;
 
 #[derive(Component)]
 pub struct EnemyPlugin;
@@ -28,9 +26,10 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
 
+
     commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle,
+            texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
                 translation: Vec3::new(200.0, 100.0, 0.0),
                 scale: Vec3::splat(3.5),
@@ -38,11 +37,29 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
             },
             visibility: Visibility::VISIBLE,
             ..default()
-                
+
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Enemy)
         .insert(Velosity{x: 0.0, y: 0.0});
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(-300.0, 20.0, 0.0),
+                scale: Vec3::splat(3.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Velosity{x: 0.0, y: 0.0});
+
 }
 
 
@@ -91,8 +108,8 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
             let mut translation = &mut enemy_pos.translation;
 
 
-            translation.x += velocity.x * 20.0;
-            translation.y += velocity.y * 20.0;
+            translation.x += velocity.x * 40.0;
+            translation.y += velocity.y * 40.0;
 
         }
 
@@ -101,7 +118,7 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 
 
 
-pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(Entity, &Transform), With<Enemy>> ){
+pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(Entity, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
 
     for (player, transform_player) in query_player.iter(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -119,6 +136,9 @@ pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transf
 
             if let Some(_) = collide{
                 commands.entity(player).despawn();
+                app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
+
+
 
             }
         }

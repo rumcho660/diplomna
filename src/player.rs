@@ -35,7 +35,8 @@ pub struct Position{
     pub y: f32,
 }
 
-
+#[derive(Resource, Debug)]
+pub struct DeadCount(pub i32);
 
 
 #[derive(Component, Deref, DerefMut)]
@@ -129,7 +130,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
 }
 
 
-pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands, mut position: ResMut<Position>){
+pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands){
     let syringe_right  = asset_server.load("Syringe_right.png");
     let syringe_left  = asset_server.load("Syringe_left.png");
     let syringe_up  = asset_server.load("Syringe_up.png");

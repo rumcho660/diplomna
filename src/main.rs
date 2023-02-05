@@ -5,6 +5,7 @@ mod player;
 mod gamestory;
 mod enemy;
 mod rooms;
+mod gameover_score;
 
 use bevy:: prelude::*;
 use bevy::app::AppExit;
@@ -14,9 +15,10 @@ use bevy_kira_audio::AudioPlugin;
 use bevy_kira_audio::Audio;
 use bevy_kira_audio::AudioControl;
 use crate::enemy::EnemyPlugin;
+use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
 use crate::menu::{MenusPlugin, quit_button_clicked, setup_menu, start_button_clicked};
-use crate::player::{PlayerPlugin, Position, spawn_player};
+use crate::player::{DeadCount, PlayerPlugin, Position, spawn_player};
 use crate::rooms::RoomsPlugin;
 use crate::sound::audio_game;
 use crate::timer::{destroy_timer_el, timer_til_game_end, TimerEndGame, TimerPlugin};
@@ -48,6 +50,7 @@ fn setup_camera(mut commands: Commands) {
 fn main() {
     App::new()
         .insert_resource(TimerEndGame(Timer::from_seconds(11.0, TimerMode::Once)))
+        .insert_resource(DeadCount(0))
         .insert_resource(Position{x:0.0, y:0.0})
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             window: WindowDescriptor{
@@ -68,6 +71,7 @@ fn main() {
         .add_plugin(RoomsPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(EnemyPlugin)
+        .add_plugin(CounterPLugin)
         .add_startup_system(audio_game)
         .add_system(close_on_esc)
         .run();
