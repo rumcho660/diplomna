@@ -158,16 +158,16 @@ impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::Room1)
             .with_system(spawn_enemy))
-        .add_system_set(SystemSet::on_update(GameState::Room1)
-            .with_system(move_enemy)
-            .with_system(enemy_attack))
-        .add_system_set(SystemSet::on_enter(GameState::Room2)
-            .with_system(spawn_enemy))
-        .add_system_set(SystemSet::on_update(GameState::Room2)
-            .with_system(move_enemy)
-            .with_system(enemy_attack))
-        .add_system_set(SystemSet::on_enter(GameState::GameOver)
-            .with_system(despawn_enemy));
+            .add_system_set(SystemSet::on_update(GameState::Room1)
+                .with_system(move_enemy)
+                .with_system(enemy_attack))
+            .add_system_set(SystemSet::on_enter(GameState::Room2)
+                .with_system(spawn_enemy))
+            .add_system_set(SystemSet::on_update(GameState::Room2)
+                .with_system(move_enemy)
+                .with_system(enemy_attack))
+            .add_system_set(SystemSet::on_enter(GameState::GameOver)
+                .with_system(despawn_enemy));
 
 
     }

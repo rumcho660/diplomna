@@ -50,6 +50,7 @@ fn setup_camera(mut commands: Commands) {
 fn main() {
     App::new()
         .insert_resource(TimerEndGame(Timer::from_seconds(11.0, TimerMode::Once)))
+        .insert_resource(DeadCount(0))
         .insert_resource(Position{x:0.0, y:0.0})
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             window: WindowDescriptor{

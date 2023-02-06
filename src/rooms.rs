@@ -93,13 +93,13 @@ impl Plugin for RoomsPlugin{
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainRoom)
             .with_system(spawn_main_room))
-        .add_system_set(SystemSet::on_enter(GameState::Room1)
-            .with_system(despawn_main_room)
-            .with_system(spawn_room1))
-        .add_system_set(SystemSet::on_enter(GameState::Room2)
-            .with_system(despawn_room1)
-            .with_system(spawn_room2))
-        .add_system_set(SystemSet::on_enter(GameState::GameOver)
-            .with_system(despawn_room2));
+            .add_system_set(SystemSet::on_enter(GameState::Room1)
+                .with_system(despawn_main_room)
+                .with_system(spawn_room1))
+            .add_system_set(SystemSet::on_enter(GameState::Room2)
+                .with_system(despawn_room1)
+                .with_system(spawn_room2))
+            .add_system_set(SystemSet::on_enter(GameState::GameOver)
+                .with_system(despawn_room2));
     }
 }

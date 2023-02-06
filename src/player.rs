@@ -35,7 +35,7 @@ pub struct Position{
     pub y: f32,
 }
 
-#[derive(Resource, Debug)]
+#[derive(Resource)]
 pub struct DeadCount(pub i32);
 
 
@@ -287,7 +287,7 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
 
 
 
-pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>> ){
+pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>, mut deadcount: ResMut<DeadCount> ){
 
     for (syringe, damage ,transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
@@ -308,6 +308,8 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage
                 commands.entity(syringe).despawn();
 
                 if health.value == 0{
+                    deadcount.0 += 10;
+                    println!("{}", deadcount.0);
                     commands.entity(enemy).despawn();
                 }
             }
@@ -332,10 +334,10 @@ impl Plugin for PlayerPlugin  {
                 .with_system(moving_syringes)
                 .with_system(syringe_hit))
             .add_system_set(SystemSet::on_update(GameState::Room2)
-            .with_system(control_direction_syringe)
-            .with_system(move_player)
-            .with_system(moving_syringes)
-            .with_system(syringe_hit))
+                .with_system(control_direction_syringe)
+                .with_system(move_player)
+                .with_system(moving_syringes)
+                .with_system(syringe_hit))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_player)
                 .with_system(despawn_syringes));

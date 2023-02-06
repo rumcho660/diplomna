@@ -1,6 +1,6 @@
 use bevy:: prelude::*;
 use crate::GameState;
-use crate::player::DeadCount;
+use crate::player::{DeadCount, Syringe};
 
 #[derive(Component)]
 pub struct GameScore;
@@ -9,8 +9,7 @@ pub struct GameScore;
 pub struct CounterPLugin;
 
 
-pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>){
-
+pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, mut deadcount: ResMut<DeadCount>){
 
     let font_score = asset_server.load("FFFFORWA.TTF");
 
@@ -39,7 +38,7 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>){
                     flex_direction: FlexDirection::Column,
                     ..default()
                 },
-                text: Text::from_section("Game Over", text_style_score.clone()),
+                text: Text::from_section("Game Over    Your score is:", text_style_score.clone()),
                 ..default()
             });
 
@@ -50,7 +49,7 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>){
                 flex_direction: FlexDirection::Column,
                 ..default()
             },
-            text: Text::from_section("You just fucking died",  text_style_score.clone()),
+            text: Text::from_section(deadcount.0.to_string(),  text_style_score.clone()),
             ..default()
         });
 
