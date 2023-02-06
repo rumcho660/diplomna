@@ -82,7 +82,7 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Commands, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
+pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Commands, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
     for (entity, mut health, mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
@@ -133,6 +133,14 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Comman
                 }
             }
 
+        }
+
+        if keyboard_input.just_pressed(KeyCode::Key1) {
+            app_state.set(GameState::Room1);
+        }
+
+        if keyboard_input.just_pressed(KeyCode::Key2) {
+            app_state.set(GameState::Room2);
         }
 
         let mut transtalion =  &mut _transform.translation;
@@ -247,7 +255,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 }
 
 
-pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands, mut app_state: ResMut<State<GameState>> ) {
+pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
         translation.x += velocity.x * SPEED_SYRINGE;
@@ -259,7 +267,6 @@ pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mu
             || translation.x < -WINDOW_WIDTH / 2. - 100.0{
 
 
-            app_state.set(GameState::Room1).expect("error setting room1 state");
             commands.entity(entity).despawn();
 
         }
@@ -296,8 +303,6 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transf
             if let Some(_) = collide{
                 commands.entity(enemy).despawn();
                 commands.entity(syringe).despawn();
-
-                app_state.set(GameState::Room2);
             }
         }
     }
