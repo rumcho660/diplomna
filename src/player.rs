@@ -43,6 +43,16 @@ pub struct DeadCount(pub i32);
 pub struct AnimationTimerPlayer(Timer);
 
 
+#[derive(Component)]
+pub struct Health{
+    pub value: i32
+}
+
+#[derive(Component)]
+pub struct Damage{
+    pub value: i32
+}
+
 
 
 pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
@@ -60,6 +70,8 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
+        .insert(Health{value: 20})
+        .insert(Damage{value: 1})
         .insert(Velosity{x: 0.0, y: 0.0});
 }
 
@@ -70,8 +82,8 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<&mut Transform, With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
-    for mut _transform in query.iter_mut() {
+pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Commands, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>, )>) {
+    for (entity, mut health, mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
@@ -126,6 +138,20 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Pos
         let mut transtalion =  &mut _transform.translation;
         transtalion.x = position.x;
         transtalion.y = position.y;
+
+
+
+        if transtalion.y > WINDOW_HEIGHT / 2.
+            || transtalion.y < -WINDOW_HEIGHT / 2.
+            || transtalion.x > WINDOW_WIDTH / 2.
+            || transtalion.x < -WINDOW_WIDTH / 2.{
+
+
+            health.value -= 4;
+            commands.entity(entity).despawn();
+            app_state.set(GameState::GameOver).expect("error with game over state");
+
+        }
     }
 }
 
@@ -224,16 +250,16 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands, mut app_state: ResMut<State<GameState>> ) {
     for (entity, velocity, mut transform) in query.iter_mut() {
         let mut translation = &mut transform.translation;
-        let mut current_room = 0;
         translation.x += velocity.x * SPEED_SYRINGE;
         translation.y += velocity.y * SPEED_SYRINGE;
 
         if translation.y > WINDOW_HEIGHT / 2. + 100.0
             || translation.y < -WINDOW_HEIGHT / 2. - 100.0
             || translation.x > WINDOW_WIDTH / 2. + 100.0
-            || translation.x < -WINDOW_WIDTH / 2. - 100.0 && current_room == 0{
+            || translation.x < -WINDOW_WIDTH / 2. - 100.0{
 
-            app_state.set(GameState::Room1);
+
+            app_state.set(GameState::Room1).expect("error setting room1 state");
             commands.entity(entity).despawn();
 
         }

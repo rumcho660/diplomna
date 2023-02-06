@@ -131,15 +131,6 @@ pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventW
     }
     else if timer_end.0.elapsed_secs() == 11.0{
         app_state.set(GameState::GameOver).expect("Problem with pushing GameOver state");
-        commands.spawn(Text2dBundle {
-            text: Text::from_section("Time ran out\n
-            Try agan by restarting the game", text_style_over.clone()),
-            transform: Transform::from_xyz(-550.0, 100.0, 0.0),
-            ..default()
-        });
-
-
-
     }
 
 
@@ -154,14 +145,13 @@ pub fn destroy_timer_el(mut commands: Commands, query: Query<Entity, With<TimerI
 
 impl Plugin for TimerPlugin{
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_update(GameState::MainRoom)
-            .with_system(timer_til_game_end))
+        app
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(destroy_timer_el))
-        .add_system_set(SystemSet::on_update(GameState::Room1)
-            .with_system(timer_til_game_end))
-        .add_system_set(SystemSet::on_update(GameState::Room2)
-            .with_system(timer_til_game_end));
+            .add_system_set(SystemSet::on_update(GameState::Room1)
+                .with_system(timer_til_game_end))
+            .add_system_set(SystemSet::on_update(GameState::Room2)
+                .with_system(timer_til_game_end));
     }
 }
 

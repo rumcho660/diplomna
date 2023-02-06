@@ -1,8 +1,9 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide, Collision};
-use crate::player::{Player, Velosity};
+use crate::player::{Health, Player, Velosity};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PlAYER_SIZE};
 use bevy::math::Vec3Swizzles;
+use crate::player::Damage;
 
 
 #[derive(Component)]
@@ -41,6 +42,8 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Enemy)
+        .insert(Health{value: 5})
+        .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -118,12 +121,12 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 
 
 
-pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(Entity, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
+pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>, query_enemy: Query<(&Damage, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
 
-    for (player, transform_player) in query_player.iter(){
+    for (player, mut health,  transform_player) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
 
-        for (enemy, transform_enemy) in query_enemy.iter()  {
+        for (damage, transform_enemy) in query_enemy.iter()  {
             let enemy_scale = Vec2::from(transform_enemy.scale.xy());
 
             let collide = collide(
@@ -135,11 +138,13 @@ pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transf
 
 
             if let Some(_) = collide{
-                commands.entity(player).despawn();
-                app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
+                health.value -= damage.value;
 
 
-
+                if health.value == 0{
+                    commands.entity(player).despawn();
+                    app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
+                }
             }
         }
     }
