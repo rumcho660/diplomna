@@ -61,6 +61,8 @@ pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut t
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Enemy)
+        .insert(Health{value: 5})
+        .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 }
@@ -111,8 +113,8 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
             let mut translation = &mut enemy_pos.translation;
 
 
-            translation.x += velocity.x * 40.0;
-            translation.y += velocity.y * 40.0;
+            translation.x += velocity.x * 80.0;
+            translation.y += velocity.y * 80.0;
 
         }
 

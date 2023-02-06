@@ -70,8 +70,7 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
-        .insert(Health{value: 20})
-        .insert(Damage{value: 1})
+        .insert(Health{value: 200})
         .insert(Velosity{x: 0.0, y: 0.0});
 }
 
@@ -186,6 +185,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
                 },
                 ..default()
             }).insert(Syringe)
+                .insert(Damage{value: 1})
                 .insert(Velosity{x: 1.0 , y: 0.0});
 
         }
@@ -207,6 +207,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
                 },
                 ..default()
             }).insert(Syringe)
+                .insert(Damage{value: 1})
                 .insert(Velosity{x: -1.0 , y: 0.0});
         }
 
@@ -227,6 +228,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
                 },
                 ..default()
             }).insert(Syringe)
+                .insert(Damage{value: 1})
                 .insert(Velosity{x: 0.0 , y: 1.0});
 
         }
@@ -248,6 +250,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
                 },
                 ..default()
             }).insert(Syringe)
+                .insert(Damage{value: 1})
                 .insert(Velosity{x: 0.0 , y: -1.0});
 
         }
@@ -284,12 +287,12 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
 
 
 
-pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>, query_enemy: Query<(Entity, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
+pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>> ){
 
-    for (syringe, transform_syringe) in query_syringe.iter(){
+    for (syringe, damage ,transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
 
-        for (enemy, transform_enemy) in query_enemy.iter()  {
+        for (enemy, mut health, transform_enemy) in query_enemy.iter_mut()  {
             let enemy_scale = Vec2::from(transform_enemy.scale.xy());
 
             let collide = collide(
@@ -301,8 +304,12 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Transf
 
 
             if let Some(_) = collide{
-                commands.entity(enemy).despawn();
+                health.value = health.value - damage.value;
                 commands.entity(syringe).despawn();
+
+                if health.value == 0{
+                    commands.entity(enemy).despawn();
+                }
             }
         }
     }
