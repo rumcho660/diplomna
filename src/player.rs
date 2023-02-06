@@ -142,19 +142,6 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Comman
         transtalion.x = position.x;
         transtalion.y = position.y;
 
-
-
-        if transtalion.y > WINDOW_HEIGHT / 2.
-            || transtalion.y < -WINDOW_HEIGHT / 2.
-            || transtalion.x > WINDOW_WIDTH / 2.
-            || transtalion.x < -WINDOW_WIDTH / 2.{
-
-
-            health.value -= 4;
-            commands.entity(entity).despawn();
-            app_state.set(GameState::GameOver).expect("error with game over state");
-
-        }
     }
 }
 

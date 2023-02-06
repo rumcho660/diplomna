@@ -2,7 +2,7 @@ use bevy:: prelude::*;
 use bevy::math::Vec3Swizzles;
 use bevy::sprite::collide_aabb::collide;
 use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
-use crate::player::Player;
+use crate::player::{Health, Player};
 
 
 #[derive(Component)]
@@ -159,9 +159,9 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
 }
 
 
-pub fn hitting_wall(mut query_player: Query<(&mut Transform), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)> ){
+pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)> ){
 
-    for mut transform_player in query_player.iter_mut(){
+    for (entity, mut transform_player, mut health) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
 
         for  transform_wall in query_wall.iter()  {
@@ -176,9 +176,9 @@ pub fn hitting_wall(mut query_player: Query<(&mut Transform), (With<Player>, Wit
 
 
             if let Some(_) = collide{
-                let mut transtalion =  &mut transform_player.translation;
-                transtalion.x = 10.0;
-                transtalion.y = 10.0;
+                health.value -= 4;
+                commands.entity(entity).despawn();
+                app_state.set(GameState::GameOver);
             }
         }
     }
