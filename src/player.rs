@@ -261,10 +261,10 @@ pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mu
         translation.x += velocity.x * SPEED_SYRINGE;
         translation.y += velocity.y * SPEED_SYRINGE;
 
-        if translation.y > WINDOW_HEIGHT / 2. + 100.0
-            || translation.y < -WINDOW_HEIGHT / 2. - 100.0
-            || translation.x > WINDOW_WIDTH / 2. + 100.0
-            || translation.x < -WINDOW_WIDTH / 2. - 100.0{
+        if translation.y > WINDOW_HEIGHT / 3.
+            || translation.y < -WINDOW_HEIGHT / 3.
+            || translation.x > WINDOW_WIDTH / 3.
+            || translation.x < -WINDOW_WIDTH / 3.{
 
 
             commands.entity(entity).despawn();

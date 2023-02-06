@@ -1,13 +1,11 @@
 use bevy:: prelude::*;
-use crate::{GameState};
+use bevy::sprite::collide_aabb::collide;
+use crate::{GameState, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 
 
 #[derive(Component)]
 pub struct RoomsPlugin;
-
-#[derive(Component)]
-pub struct MainRoom;
 
 #[derive(Component)]
 pub struct Room1;
@@ -16,25 +14,112 @@ pub struct Room1;
 pub struct Room2;
 
 
-pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
+#[derive(Component)]
+pub struct Wall;
 
-    let main_room = asset_surver.load("MainRoom.png");
+
+#[derive(Component)]
+pub struct Bed;
+
+
+#[derive(Component)]
+pub struct Something;
+
+
+pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
+    let block = asset_surver.load("Block.png");
+
+
 
     commands.spawn(
         SpriteBundle {
-            texture: main_room.clone(),
-            transform: Transform::from_scale(Vec3::splat(26.0)),
+            texture: block.clone(),
+            transform: Transform{
+                translation: Vec3::new(0.0, -WINDOW_HEIGHT/2.0 + 35.0, 0.0),
+                scale: Vec3::splat(2.0),
+                ..default()
+            },
             ..default()
         }
-    ).insert(MainRoom);
+    ).insert(Wall);
+
+
+
+    commands.spawn(
+        SpriteBundle {
+            texture: block.clone(),
+            transform: Transform{
+                translation: Vec3::new(0.0, WINDOW_HEIGHT/2.0 - 35.0, 0.0),
+                scale: Vec3::splat(2.0),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(Wall);
+
+
+
+    commands.spawn(
+        SpriteBundle {
+            texture: block.clone(),
+            transform: Transform{
+                translation: Vec3::new(-WINDOW_WIDTH/2.0 + 35.0, 0.0, 0.0),
+                scale: Vec3::splat(2.0),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(Wall);
+
+
+    commands.spawn(
+        SpriteBundle {
+            texture: block.clone(),
+            transform: Transform{
+                translation: Vec3::new(WINDOW_WIDTH/2.0 - 35.0, 0.0, 0.0),
+                scale: Vec3::splat(2.0),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(Wall);
 
 }
 
 
+pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(&Transform), With<Wall>> ){
 
-pub fn despawn_main_room(mut commands: Commands, query: Query< Entity, With<MainRoom>>){
-    for main_room in query.iter(){
-        commands.entity(main_room).despawn();
+    for (player, mut health,  transform_player) in query_player.iter_mut(){
+        let player_scale = Vec2::from(transform_player.scale.xy());
+
+        for (damage, transform_enemy) in query_enemy.iter()  {
+            let enemy_scale = Vec2::from(transform_enemy.scale.xy());
+
+            let collide = collide(
+                transform_player.translation,
+                SPRITE_PLAYER_SIZE * player_scale,
+                transform_enemy.translation,
+                SPRITE_ENEMY_SIZE * enemy_scale,
+            );
+
+
+            if let Some(_) = collide{
+                health.value -= damage.value;
+
+
+                if health.value == 0{
+                    commands.entity(player).despawn();
+                    app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
+                }
+            }
+        }
+    }
+}
+
+
+pub fn despawn_main_room(mut commands: Commands, query: Query< Entity, With<Wall>>){
+    for walls in query.iter(){
+        commands.entity(walls).despawn();
     }
 }
 
