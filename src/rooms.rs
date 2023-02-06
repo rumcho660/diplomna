@@ -1,7 +1,8 @@
 use bevy:: prelude::*;
+use bevy::math::Vec3Swizzles;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, WINDOW_HEIGHT, WINDOW_WIDTH};
-
+use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::player::Player;
 
 
 #[derive(Component)]
@@ -30,87 +31,154 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
     let block = asset_surver.load("Block.png");
 
 
-
-    commands.spawn(
-        SpriteBundle {
-            texture: block.clone(),
-            transform: Transform{
-                translation: Vec3::new(0.0, -WINDOW_HEIGHT/2.0 + 35.0, 0.0),
-                scale: Vec3::splat(2.0),
+    let mut x1 = 0.0;
+    let mut x2 = 0.0;
+    let mut x3 = 0.0;
+    let mut x4 = 0.0;
+    while x1 < WINDOW_WIDTH/2.0 {
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x1, -WINDOW_HEIGHT/2.0 + 32.0, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
-            },
-            ..default()
-        }
-    ).insert(Wall);
+            }
+        ).insert(Wall);
+        x1 += 64.0;
 
-
-
-    commands.spawn(
-        SpriteBundle {
-            texture: block.clone(),
-            transform: Transform{
-                translation: Vec3::new(0.0, WINDOW_HEIGHT/2.0 - 35.0, 0.0),
-                scale: Vec3::splat(2.0),
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x2, -WINDOW_HEIGHT/2.0 + 32.0, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
-            },
-            ..default()
-        }
-    ).insert(Wall);
+            }
+        ).insert(Wall);
+        x2 -= 64.0;
 
-
-
-    commands.spawn(
-        SpriteBundle {
-            texture: block.clone(),
-            transform: Transform{
-                translation: Vec3::new(-WINDOW_WIDTH/2.0 + 35.0, 0.0, 0.0),
-                scale: Vec3::splat(2.0),
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x3, WINDOW_HEIGHT/2.0 - 32.0, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
-            },
-            ..default()
-        }
-    ).insert(Wall);
+            }
+        ).insert(Wall);
+        x3 += 64.0;
 
 
-    commands.spawn(
-        SpriteBundle {
-            texture: block.clone(),
-            transform: Transform{
-                translation: Vec3::new(WINDOW_WIDTH/2.0 - 35.0, 0.0, 0.0),
-                scale: Vec3::splat(2.0),
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x4, WINDOW_HEIGHT/2.0 - 32.0, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
-            },
-            ..default()
-        }
-    ).insert(Wall);
+            }
+        ).insert(Wall);
+        x4 -= 64.0;
+    }
+
+
+
+    let mut y1 = 0.0;
+    let mut y2 = 0.0;
+    let mut y3 = 0.0;
+    let mut y4 = 0.0;
+    while y1 < WINDOW_HEIGHT/2.0{
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(-WINDOW_WIDTH/2.0 + 32.0, y1, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Wall);
+
+        y1 += 64.0;
+
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(-WINDOW_WIDTH/2.0 + 32.0, y2, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Wall);
+
+        y2 -= 64.0;
+
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(WINDOW_WIDTH/2.0 - 32.0, y3, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Wall);
+
+        y3 += 64.0;
+
+
+        commands.spawn(
+            SpriteBundle {
+                texture: block.clone(),
+                transform: Transform{
+                    translation: Vec3::new(WINDOW_WIDTH/2.0 - 32.0, y4, 0.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Wall);
+
+        y4 -= 64.0;
+
+    }
 
 }
 
 
-pub fn enemy_attack(mut commands: Commands, query_player: Query<(Entity, &Transform), With<Player>>, query_enemy: Query<(&Transform), With<Wall>> ){
+pub fn hitting_wall(mut query_player: Query<(&mut Transform), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)> ){
 
-    for (player, mut health,  transform_player) in query_player.iter_mut(){
+    for mut transform_player in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
 
-        for (damage, transform_enemy) in query_enemy.iter()  {
-            let enemy_scale = Vec2::from(transform_enemy.scale.xy());
+        for  transform_wall in query_wall.iter()  {
+            let wall_scale = Vec2::from(transform_wall.scale.xy());
 
             let collide = collide(
                 transform_player.translation,
                 SPRITE_PLAYER_SIZE * player_scale,
-                transform_enemy.translation,
-                SPRITE_ENEMY_SIZE * enemy_scale,
+                transform_wall.translation,
+                SPRITE_WALL_SIZE * wall_scale,
             );
 
 
             if let Some(_) = collide{
-                health.value -= damage.value;
-
-
-                if health.value == 0{
-                    commands.entity(player).despawn();
-                    app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
-                }
+                let mut transtalion =  &mut transform_player.translation;
+                transtalion.x = 10.0;
+                transtalion.y = 10.0;
             }
         }
     }
@@ -178,6 +246,8 @@ impl Plugin for RoomsPlugin{
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainRoom)
             .with_system(spawn_main_room))
+            .add_system_set(SystemSet::on_update(GameState::MainRoom)
+                .with_system(hitting_wall))
             .add_system_set(SystemSet::on_enter(GameState::Room1)
                 .with_system(despawn_main_room)
                 .with_system(spawn_room1))

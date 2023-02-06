@@ -24,6 +24,7 @@ const WINDOW_WIDTH:f32 = 900.0;
 
 pub const SPRITE_ENEMY_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 pub const SPRITE_PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+pub const SPRITE_WALL_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 pub const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 
