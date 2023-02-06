@@ -17,20 +17,12 @@ pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventW
 
 
     let font1 = asset_server.load("ARCADECLASSIC.TTF");
-    let font2 = asset_server.load("FFFFORWA.TTF");
 
     let text_style = TextStyle {
         font: font1,
         font_size: 20.0,
         color: Color::RED,
     };
-
-    let text_style_over = TextStyle {
-        font: font2,
-        font_size: 60.0,
-        color: Color::BLACK,
-    };
-
 
 
     timer_end.0.tick(Duration::from_secs_f32(0.02));

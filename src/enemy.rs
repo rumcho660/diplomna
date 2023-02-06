@@ -1,10 +1,11 @@
 use bevy:: prelude::*;
-use bevy::sprite::collide_aabb::{collide, Collision};
+use bevy::sprite::collide_aabb::{collide};
 use crate::player::{Health, Player, Velosity};
-use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PlAYER_SIZE};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE};
 use bevy::math::Vec3Swizzles;
 use crate::player::Damage;
 
+const SPEED_ENEMY: f32 = 200.0;
 
 #[derive(Component)]
 pub struct Enemy;
@@ -20,7 +21,7 @@ pub struct AnimationTimerEnemy(pub Timer);
 
 
 
-pub fn spawn_enemy(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     let texture_handle = asset_server.load("Enemy_final.png");
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
@@ -113,8 +114,8 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
             let mut translation = &mut enemy_pos.translation;
 
 
-            translation.x += velocity.x * 80.0;
-            translation.y += velocity.y * 80.0;
+            translation.x += velocity.x * SPEED_ENEMY;
+            translation.y += velocity.y * SPEED_ENEMY;
 
         }
 
@@ -133,7 +134,7 @@ pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mu
 
             let collide = collide(
                 transform_player.translation,
-                SPRITE_PlAYER_SIZE * player_scale,
+                SPRITE_PLAYER_SIZE * player_scale,
                 transform_enemy.translation,
                 SPRITE_ENEMY_SIZE * enemy_scale,
             );
@@ -157,12 +158,12 @@ pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mu
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::Room1)
-            .with_system(spawn_enemy))
+            .with_system(spawn_enemy_wave1))
             .add_system_set(SystemSet::on_update(GameState::Room1)
                 .with_system(move_enemy)
                 .with_system(enemy_attack))
             .add_system_set(SystemSet::on_enter(GameState::Room2)
-                .with_system(spawn_enemy))
+                .with_system(spawn_enemy_wave1))
             .add_system_set(SystemSet::on_update(GameState::Room2)
                 .with_system(move_enemy)
                 .with_system(enemy_attack))

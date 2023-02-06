@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
-use bevy::transform;
-use bevy::transform::TransformSystem;
-use crate::{GameState, MARGIN, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
 
@@ -10,7 +8,6 @@ use bevy::math::Vec3Swizzles;
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
 const SPEED_PLAYER: f32 = 200.0;
-
 const SPEED_SYRINGE: f32 = 50.0;
 
 

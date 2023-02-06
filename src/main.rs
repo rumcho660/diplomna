@@ -8,27 +8,22 @@ mod rooms;
 mod gameover_score;
 
 use bevy:: prelude::*;
-use bevy::app::AppExit;
-use bevy::text::Text2dBundle;
 use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
-use bevy_kira_audio::Audio;
-use bevy_kira_audio::AudioControl;
 use crate::enemy::EnemyPlugin;
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
-use crate::menu::{MenusPlugin, quit_button_clicked, setup_menu, start_button_clicked};
-use crate::player::{DeadCount, PlayerPlugin, Position, spawn_player};
+use crate::menu::MenusPlugin;
+use crate::player::{DeadCount, PlayerPlugin, Position};
 use crate::rooms::RoomsPlugin;
 use crate::sound::audio_game;
-use crate::timer::{destroy_timer_el, timer_til_game_end, TimerEndGame, TimerPlugin};
+use crate::timer::{TimerEndGame, TimerPlugin};
 
 const WINDOW_HEIGHT:f32 = 700.0;
 const WINDOW_WIDTH:f32 = 900.0;
-const MARGIN: f32 = 200.;
 
 pub const SPRITE_ENEMY_SIZE: Vec2 = Vec2::new(32.0, 32.0);
-pub const SPRITE_PlAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+pub const SPRITE_PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 pub const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 

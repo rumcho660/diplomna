@@ -1,6 +1,6 @@
 use bevy:: prelude::*;
-use crate::{GameState, WINDOW_HEIGHT, WINDOW_WIDTH};
-use crate::player::Player;
+use crate::{GameState};
+
 
 
 #[derive(Component)]
@@ -18,7 +18,7 @@ pub struct Room2;
 
 pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
 
-    let mut main_room = asset_surver.load("MainRoom.png");
+    let main_room = asset_surver.load("MainRoom.png");
 
     commands.spawn(
         SpriteBundle {
@@ -43,7 +43,7 @@ pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
 
 
 
-    let mut room1 = asset_surver.load("Room1.png");
+    let room1 = asset_surver.load("Room1.png");
 
     commands.spawn(
         SpriteBundle {
@@ -68,7 +68,7 @@ pub fn spawn_room2(mut commands: Commands, asset_surver: Res<AssetServer>){
 
 
 
-    let mut room2 = asset_surver.load("Room2.png");
+    let room2 = asset_surver.load("Room2.png");
 
     commands.spawn(
         SpriteBundle {
