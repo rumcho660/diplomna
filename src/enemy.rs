@@ -33,8 +33,8 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(200.0, 100.0, 0.0),
-                scale: Vec3::splat(3.5),
+                translation: Vec3::new(300.0, 100.0, 1.0),
+                scale: Vec3::splat(2.5),
                 ..default()
             },
             visibility: Visibility::VISIBLE,
@@ -52,8 +52,67 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(-300.0, 20.0, 0.0),
-                scale: Vec3::splat(3.5),
+                translation: Vec3::new(-300.0, 100.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 5})
+        .insert(Damage{value: 2})
+        .insert(Velosity{x: 0.0, y: 0.0});
+
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(230.0, -200.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 5})
+        .insert(Damage{value: 2})
+        .insert(Velosity{x: 0.0, y: 0.0});
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(-200.0, -100.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 5})
+        .insert(Damage{value: 2})
+        .insert(Velosity{x: 0.0, y: 0.0});
+
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(200.0, 200.0, 1.0),
+                scale: Vec3::splat(2.5),
                 ..default()
             },
             visibility: Visibility::VISIBLE,

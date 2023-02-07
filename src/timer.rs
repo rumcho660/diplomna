@@ -35,7 +35,6 @@ pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventW
             transform: Transform::from_xyz(-620.0, 350.0, 0.0),
             ..default()
         }).insert(TimerItem);
-
     }
 
     else if timer_end.0.elapsed_secs() == 2.0{

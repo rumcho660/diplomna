@@ -40,7 +40,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
             SpriteBundle {
                 texture: block.clone(),
                 transform: Transform{
-                    translation: Vec3::new(x1, -WINDOW_HEIGHT/2.0 + 32.0, 0.0),
+                    translation: Vec3::new(x1, -WINDOW_HEIGHT/2.0 + 32.0, 1.0),
                     scale: Vec3::splat(2.0),
                     ..default()
                 },
@@ -53,7 +53,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
             SpriteBundle {
                 texture: block.clone(),
                 transform: Transform{
-                    translation: Vec3::new(x2, -WINDOW_HEIGHT/2.0 + 32.0, 0.0),
+                    translation: Vec3::new(x2, -WINDOW_HEIGHT/2.0 + 32.0, 1.0),
                     scale: Vec3::splat(2.0),
                     ..default()
                 },
@@ -66,7 +66,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
             SpriteBundle {
                 texture: block.clone(),
                 transform: Transform{
-                    translation: Vec3::new(x3, WINDOW_HEIGHT/2.0 - 32.0, 0.0),
+                    translation: Vec3::new(x3, WINDOW_HEIGHT/2.0 - 32.0, 1.0),
                     scale: Vec3::splat(2.0),
                     ..default()
                 },
@@ -80,7 +80,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
             SpriteBundle {
                 texture: block.clone(),
                 transform: Transform{
-                    translation: Vec3::new(x4, WINDOW_HEIGHT/2.0 - 32.0, 0.0),
+                    translation: Vec3::new(x4, WINDOW_HEIGHT/2.0 - 32.0, 1.0),
                     scale: Vec3::splat(2.0),
                     ..default()
                 },
@@ -201,8 +201,11 @@ pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
     commands.spawn(
         SpriteBundle {
             texture: room1.clone(),
-            transform: Transform::from_scale(Vec3::splat(26.0)),
-            visibility: Visibility::VISIBLE,
+            transform: Transform{
+                translation: Vec3::new(0.0, 0.0, 0.0),
+                scale: Vec3::splat(15.0),
+                ..default()
+            },
             ..default()
         }
     ).insert(Room1);

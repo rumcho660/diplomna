@@ -62,7 +62,7 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle,
-            transform: Transform::from_scale(Vec3::splat(3.5)),
+            transform: Transform::from_scale(Vec3::splat(2.5)),
             ..default()
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
