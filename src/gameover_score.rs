@@ -1,5 +1,5 @@
 use bevy:: prelude::*;
-use crate::GameState;
+use crate::{GameState, TypeDeath};
 use crate::player::{DeadCount};
 
 #[derive(Component)]
@@ -9,7 +9,19 @@ pub struct GameScore;
 pub struct CounterPLugin;
 
 
-pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadcount: Res<DeadCount>){
+pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadcount: Res<DeadCount>, mut type_dead: ResMut<TypeDeath>){
+    let mut type_of_dead;
+
+    if type_dead.0 == 1 {
+        type_of_dead = "Death by enemy";
+    }
+    else if type_dead.0 == 2 {
+        type_of_dead = "Death by poisonous wall";
+    }
+    else {
+        type_of_dead = "Death by timer";
+    }
+
 
     let font_score = asset_server.load("FFFFORWA.TTF");
 
@@ -53,7 +65,18 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
             ..default()
         });
 
-    });
+    }).with_children(|commands|{
+        commands.spawn(TextBundle{
+            style: Style{
+                align_self: AlignSelf::Center,
+                flex_direction: FlexDirection::Column,
+                ..default()
+            },
+            text: Text::from_section(type_of_dead,  text_style_score.clone()),
+            ..default()
+        });
+
+    });;
 }
 
 

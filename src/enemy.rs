@@ -1,7 +1,7 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide};
 use crate::player::{Health, Player, Velosity};
-use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE, TypeDeath};
 use bevy::math::Vec3Swizzles;
 use crate::player::Damage;
 
@@ -183,7 +183,7 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 
 
 
-pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>, query_enemy: Query<(&Damage, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>> ){
+pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>, query_enemy: Query<(&Damage, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>>, mut type_dead: ResMut<TypeDeath> ){
 
     for (player, mut health,  transform_player) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -204,6 +204,8 @@ pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mu
 
 
                 if health.value == 0{
+                    type_dead.0 = 1;
+
                     commands.entity(player).despawn();
                     app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
                 }

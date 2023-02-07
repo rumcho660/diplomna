@@ -1,7 +1,7 @@
 use bevy:: prelude::*;
 use bevy::math::Vec3Swizzles;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::player::{Health, Player};
 
 
@@ -159,7 +159,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_surver: Res<AssetServer>){
 }
 
 
-pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)> ){
+pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)>,  mut type_dead: ResMut<TypeDeath> ){
 
     for (entity, mut transform_player, mut health) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -176,6 +176,8 @@ pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Comma
 
 
             if let Some(_) = collide{
+                type_dead.0 = 2;
+
                 health.value -= 4;
                 commands.entity(entity).despawn();
                 app_state.set(GameState::GameOver);

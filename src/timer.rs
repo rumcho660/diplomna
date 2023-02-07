@@ -1,7 +1,7 @@
 use std::time::Duration;
 use bevy:: prelude::*;
 use bevy::app::AppExit;
-use crate::GameState;
+use crate::{GameState, TypeDeath};
 
 #[derive(Resource)]
 pub struct TimerEndGame (pub Timer);
@@ -12,7 +12,7 @@ pub struct TimerItem;
 #[derive(Component)]
 pub struct TimerPlugin;
 
-pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<GameState>>){
+pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<GameState>>){
 
 
 
@@ -121,6 +121,7 @@ pub fn timer_til_game_end(mut timer_end: ResMut<TimerEndGame>, mut _exit: EventW
 
     }
     else if timer_end.0.elapsed_secs() == 11.0{
+        type_dead.0 = 3;
         app_state.set(GameState::GameOver).expect("Problem with pushing GameOver state");
     }
 
