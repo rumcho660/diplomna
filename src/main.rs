@@ -14,7 +14,7 @@ use crate::enemy::EnemyPlugin;
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
 use crate::menu::MenusPlugin;
-use crate::player::{DeadCount, PlayerPlugin, Position};
+use crate::player::{DeadChangeRoom, DeadCount, PlayerPlugin, Position};
 use crate::rooms::RoomsPlugin;
 use crate::sound::audio_game;
 use crate::timer::{TimerEndGame, TimerPlugin};
@@ -47,6 +47,7 @@ fn main() {
     App::new()
         .insert_resource(TimerEndGame(Timer::from_seconds(11.0, TimerMode::Once)))
         .insert_resource(DeadCount(0))
+        .insert_resource(DeadChangeRoom(0))
         .insert_resource(Position{x:0.0, y:0.0})
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             window: WindowDescriptor{

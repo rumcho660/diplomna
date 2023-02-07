@@ -36,6 +36,10 @@ pub struct Position{
 pub struct DeadCount(pub i32);
 
 
+#[derive(Resource)]
+pub struct DeadChangeRoom(pub i32);
+
+
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimerPlayer(Timer);
 
@@ -77,7 +81,7 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Commands, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
     for (entity, mut health, mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
@@ -130,13 +134,10 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, mut commands: Comman
 
         }
 
-        if keyboard_input.just_pressed(KeyCode::Key1) {
+        if keyboard_input.pressed(KeyCode::Space){
             app_state.set(GameState::Room1);
         }
 
-        if keyboard_input.just_pressed(KeyCode::Key2) {
-            app_state.set(GameState::Room2);
-        }
 
         let mut transtalion =  &mut _transform.translation;
         transtalion.x = position.x;
@@ -270,7 +271,7 @@ pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syring
 
 
 
-pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>, mut deadcount: ResMut<DeadCount> ){
+pub fn syringe_hit(mut app_state: ResMut<State<GameState>>, mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>, mut deadcount: ResMut<DeadCount>, mut dead_change_room: ResMut<DeadChangeRoom> ){
 
     for (syringe, damage ,transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
@@ -294,6 +295,13 @@ pub fn syringe_hit(mut commands: Commands, query_syringe: Query<(Entity, &Damage
                     deadcount.0 += 10;
                     println!("{}", deadcount.0);
                     commands.entity(enemy).despawn();
+
+                    dead_change_room.0 += 1;
+
+
+                    if dead_change_room.0 == 2 {
+                        app_state.set(GameState::Room2);
+                    }
                 }
             }
         }

@@ -68,7 +68,7 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
 
 
 
-    commands.spawn((
+    /*commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
@@ -124,7 +124,7 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         .insert(Health{value: 5})
         .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y: 0.0});
-
+       */
 }
 
 
