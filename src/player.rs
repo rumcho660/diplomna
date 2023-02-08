@@ -134,15 +134,19 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
 
         }
 
-        if keyboard_input.pressed(KeyCode::Space){
-            app_state.set(GameState::Room1);
-        }
 
 
         let mut transtalion =  &mut _transform.translation;
         transtalion.x = position.x;
         transtalion.y = position.y;
 
+    }
+}
+
+
+pub fn leave_main_room(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<Input<KeyCode>> ){
+    if keyboard_input.pressed(KeyCode::Space){
+        app_state.set(GameState::Room1);
     }
 }
 
@@ -315,6 +319,7 @@ impl Plugin for PlayerPlugin  {
         app.add_system_set(SystemSet::on_enter(GameState::MainRoom)
             .with_system(spawn_player))
             .add_system_set(SystemSet::on_update(GameState::MainRoom)
+                .with_system(leave_main_room)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
                 .with_system(moving_syringes)
