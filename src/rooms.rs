@@ -203,9 +203,20 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
 
 pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
 
+    let mut room1= asset_surver.load("Main_room.png");
+    let range = 0.0f64..100.0f64;
+    let odds = thread_rng().gen_range(range);
+
+    if odds>=0.0 && odds<=50.0{
+        room1 = asset_surver.load("Room1.png");
+    }
 
 
-    let room1 = asset_surver.load("Room1.png");
+
+    else if odds>=50.0 && odds<=100.0{
+        room1 = asset_surver.load("Room2.png");
+    }
+
 
     commands.spawn(
         SpriteBundle {
@@ -224,16 +235,29 @@ pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
 
 
 pub fn spawn_room2(mut commands: Commands, asset_surver: Res<AssetServer>){
+    let mut room2= asset_surver.load("Main_room.png");
+    let range = 0.0f64..100.0f64;
+    let odds = thread_rng().gen_range(range);
+
+    if odds>=0.0 && odds<=50.0{
+        room2 = asset_surver.load("Room1.png");
+    }
 
 
 
-    let room2 = asset_surver.load("Room2.png");
+    else if odds>=50.0 && odds<=100.0{
+        room2 = asset_surver.load("Room2.png");
+    }
+
 
     commands.spawn(
         SpriteBundle {
             texture: room2.clone(),
-            transform: Transform::from_scale(Vec3::splat(26.0)),
-            visibility: Visibility::VISIBLE,
+            transform: Transform{
+                translation: Vec3::new(0.0, 0.0, 0.0),
+                scale: Vec3::splat(8.0),
+                ..default()
+            },
             ..default()
         }
     ).insert(Room2);
