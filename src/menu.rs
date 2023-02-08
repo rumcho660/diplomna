@@ -29,7 +29,7 @@ pub struct QuitButton;
 pub struct MenusPlugin;
 
 
-pub(crate) fn start_button_clicked(
+pub fn start_button_clicked(
     mut commands: Commands,
     interactions: Query<&Interaction, (With<StartButton>, Changed<Interaction>)>,
     menu_root: Query<Entity, With<MainMenu>>,
@@ -45,7 +45,7 @@ pub(crate) fn start_button_clicked(
     }
 }
 
-pub(crate) fn quit_button_clicked(
+pub fn quit_button_clicked(
     interactions: Query<&Interaction, (With<QuitButton>, Changed<Interaction>)>,
     mut exit: EventWriter<AppExit>,
 ) {

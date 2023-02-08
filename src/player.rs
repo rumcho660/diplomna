@@ -8,7 +8,7 @@ use bevy::math::Vec3Swizzles;
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
 const SPEED_PLAYER: f32 = 200.0;
-const SPEED_SYRINGE: f32 = 50.0;
+const SPEED_SYRINGE: f32 = 25.0;
 
 
 #[derive(Component)]
@@ -166,9 +166,9 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 
             commands.spawn(SpriteBundle {
                 texture: syringe_right.clone(),
-                transform: Transform {
-                    translation: Vec3::new(x, y, 0.0),
-                    scale: Vec3::new(6.0, 6.0, 0.0),
+                transform: Transform{
+                    translation: Vec3::new(x, y, 1.0),
+                    scale: Vec3::splat(4.0),
                     ..default()
                 },
                 ..default()
@@ -187,11 +187,10 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 
             commands.spawn(SpriteBundle {
                 texture: syringe_left.clone(),
-                transform: Transform {
-                    translation: Vec3::new(x, y, 0.0),
-                    scale: Vec3::new(6.0, 6.0, 0.0),
+                transform: Transform{
+                    translation: Vec3::new(x, y, 1.0),
+                    scale: Vec3::splat(4.0),
                     ..default()
-
                 },
                 ..default()
             }).insert(Syringe)
@@ -209,9 +208,9 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 
             commands.spawn(SpriteBundle {
                 texture: syringe_up.clone(),
-                transform: Transform {
-                    translation: Vec3::new(x, y, 0.0),
-                    scale: Vec3::new(6.0, 6.0, 0.0),
+                transform: Transform{
+                    translation: Vec3::new(x, y, 1.0),
+                    scale: Vec3::splat(4.0),
                     ..default()
                 },
                 ..default()
@@ -231,9 +230,9 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 
             commands.spawn(SpriteBundle {
                 texture: syringe_down.clone(),
-                transform: Transform {
-                    translation: Vec3::new(x, y, 0.0),
-                    scale: Vec3::new(6.0, 6.0, 0.0),
+                transform: Transform{
+                    translation: Vec3::new(x, y, 1.0),
+                    scale: Vec3::splat(4.0),
                     ..default()
                 },
                 ..default()
