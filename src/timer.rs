@@ -33,7 +33,7 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
         commands.spawn(Text2dBundle {
             text: Text::from_section("1", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -44,9 +44,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
     else if timer_end.0.elapsed_secs() == 2.0{
 
         commands.spawn(Text2dBundle {
-            text: Text::from_section("2", text_style.clone()),
+            text: Text::from_section("     2       ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -57,9 +57,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
     else if timer_end.0.elapsed_secs() == 3.0{
 
         commands.spawn(Text2dBundle {
-            text: Text::from_section("3", text_style.clone()),
+            text: Text::from_section("          3      ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -69,9 +69,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 4.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("4", text_style.clone()),
+            text: Text::from_section("          4          ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -81,9 +81,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 5.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("5", text_style.clone()),
+            text: Text::from_section("                5             ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -95,9 +95,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 6.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("6", text_style.clone()),
+            text: Text::from_section("                      6                              ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -108,9 +108,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 7.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("7", text_style.clone()),
+            text: Text::from_section("                                   7                            ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -121,9 +121,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 8.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("8", text_style.clone()),
+            text: Text::from_section("                                                 8                               ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -134,9 +134,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 9.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("9", text_style.clone()),
+            text: Text::from_section("                                                              9                                       ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -147,9 +147,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     else if timer_end.0.elapsed_secs() == 10.0{
         commands.spawn(Text2dBundle {
-            text: Text::from_section("10", text_style.clone()),
+            text: Text::from_section("                                                                          10                                        ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -163,9 +163,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
     else if timer_end.0.elapsed_secs() == 11.0{
         type_dead.0 = 3;
         commands.spawn(Text2dBundle {
-            text: Text::from_section("Game over", text_style.clone()),
+            text: Text::from_section("                                                                                     Game over                                                  ", text_style.clone()),
             transform: Transform{
-                translation: Vec3::new(0.0, 250.0, 1.0),
+                translation: Vec3::new(-400.0, 250.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
