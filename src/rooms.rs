@@ -3,7 +3,7 @@ use bevy::math::Vec3Swizzles;
 use rand::Rng;
 use rand::thread_rng;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_BED_SIZE, SPRITE_PLAYER_SIZE, SPRITE_SOMETHING_SIZE, SPRITE_WALL_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::player::{Health, Player};
 
 
@@ -356,7 +356,12 @@ pub fn despawn_something(mut commands: Commands, query: Query< Entity, With<Some
 
 
 
-pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>)>, query_wall: Query<(&Transform), (With<Wall>, Without<Player>)>,  mut type_dead: ResMut<TypeDeath> ){
+pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
+                    mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
+                    query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
+                    query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
+                    query_something: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
+                    mut type_dead: ResMut<TypeDeath> ){
 
     for (entity, mut transform_player, mut health) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -380,8 +385,59 @@ pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Comma
                 app_state.set(GameState::GameOver);
             }
         }
+
+
+        for  transform_bed in query_bed.iter()  {
+            let bed_scale = Vec2::from(transform_bed.scale.xy());
+
+            let collide_bed = collide(
+                transform_player.translation,
+                SPRITE_PLAYER_SIZE * player_scale,
+                transform_bed.translation,
+                SPRITE_BED_SIZE * bed_scale,
+            );
+
+
+            if let Some(_) = collide_bed{
+                type_dead.0 = 3;
+
+                health.value -= 300;
+                commands.entity(entity).despawn();
+                app_state.set(GameState::GameOver);
+            }
+        }
+
+
+        for  transform_something in query_something.iter()  {
+            let something_scale = Vec2::from(transform_something.scale.xy());
+
+            let collide_something = collide(
+                transform_player.translation,
+                SPRITE_PLAYER_SIZE * player_scale,
+                transform_something.translation,
+                SPRITE_SOMETHING_SIZE * something_scale,
+            );
+
+
+            if let Some(_) = collide_something{
+                type_dead.0 = 4;
+
+                health.value -= 300;
+                commands.entity(entity).despawn();
+                app_state.set(GameState::GameOver);
+            }
+        }
+
+
+
+
+
+
+
     }
 }
+
+
 
 
 
@@ -392,19 +448,19 @@ impl Plugin for RoomsPlugin{
             .with_system(spawn_main_room)
             .with_system(wall_blocks_build))
             .add_system_set(SystemSet::on_update(GameState::MainRoom)
-                .with_system(hitting_wall))
+                .with_system(hitting_objects))
             .add_system_set(SystemSet::on_enter(GameState::Room1)
                 .with_system(despawn_main_floor)
                 .with_system(spawn_room1))
             .add_system_set(SystemSet::on_update(GameState::Room1)
-                .with_system(hitting_wall))
+                .with_system(hitting_objects))
             .add_system_set(SystemSet::on_enter(GameState::Room2)
                 .with_system(despawn_room1)
                 .with_system(despawn_bed)
                 .with_system(despawn_something)
                 .with_system(spawn_room2))
             .add_system_set(SystemSet::on_update(GameState::Room2)
-                .with_system(hitting_wall))
+                .with_system(hitting_objects))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_something)
                 .with_system(despawn_bed)

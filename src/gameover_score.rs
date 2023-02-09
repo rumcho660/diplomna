@@ -18,6 +18,14 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
     else if type_dead.0 == 2 {
         type_of_dead = "Death by poisonous wall";
     }
+
+    else if type_dead.0 == 3 {
+        type_of_dead = "Death by toxic bed";
+    }
+
+    else if type_dead.0 == 4 {
+        type_of_dead = "Death by deadly saline stand";
+    }
     else {
         type_of_dead = "Death by timer";
     }

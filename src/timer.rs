@@ -161,7 +161,7 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
     }
     else if timer_end.0.elapsed_secs() == 11.0{
-        type_dead.0 = 3;
+        type_dead.0 = 5;
         commands.spawn(Text2dBundle {
             text: Text::from_section("                                                                                     Game over                                                  ", text_style.clone()),
             transform: Transform{
