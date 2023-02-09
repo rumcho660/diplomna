@@ -71,7 +71,8 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut 
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
-        .insert(Health{value: 200});
+        .insert(Health{value: 200})
+        .insert(Velosity{x: 0.0, y:0.0});
 }
 
 
@@ -81,10 +82,10 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<Input<KeyCode>>, mut position: ResMut<Position>, mut query: Query<(Entity, &mut Health, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
-    for (entity, mut health, mut _transform) in query.iter_mut() {
+pub fn move_player( keyboard_input: Res<Input<KeyCode>>, mut query: Query< (&mut Velosity, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+    for (mut velocity ,mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
-            position.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
                 if timer.just_finished() {
@@ -95,7 +96,7 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
         }
 
         if keyboard_input.pressed(KeyCode::A) {
-            position.x -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.x -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -108,7 +109,7 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
         }
 
         if keyboard_input.pressed(KeyCode::W) {
-            position.y += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.y += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -121,7 +122,7 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
         }
 
         if keyboard_input.pressed(KeyCode::S) {
-            position.y -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.y -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
 
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
@@ -137,8 +138,8 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
 
 
         let mut transtalion =  &mut _transform.translation;
-        transtalion.x = position.x;
-        transtalion.y = position.y;
+        transtalion.x = velocity.x;
+        transtalion.y = velocity.y;
 
     }
 }
@@ -146,12 +147,12 @@ pub fn move_player(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<
 
 pub fn leave_main_room(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<Input<KeyCode>> ){
     if keyboard_input.pressed(KeyCode::Space){
-        app_state.set(GameState::Room1);
+        app_state.set(GameState::Room1).expect("leaving failed");
     }
 }
 
 
-pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, With<Player>>, asset_server: Res<AssetServer>, mut commands: Commands){
+pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, (With<Player>, Without<Syringe>)>, mut query_enemy: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>, asset_server: Res<AssetServer>, mut commands: Commands){
     let syringe_right  = asset_server.load("Syringe_right.png");
     let syringe_left  = asset_server.load("Syringe_left.png");
     let syringe_up  = asset_server.load("Syringe_up.png");
@@ -241,29 +242,24 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
                 .insert(Velosity{x: 0.0 , y: -1.0});
 
         }
-    }
-}
+        for (entity ,velocity, mut transform) in query_enemy.iter_mut(){
+
+            let mut translation = &mut transform.translation;
+            translation.x += velocity.x * SPEED_SYRINGE;
+            translation.y += velocity.y * SPEED_SYRINGE;
+
+            if translation.y > WINDOW_HEIGHT / 2. + 100.0
+                || translation.y < -WINDOW_HEIGHT / 2. - 100.0
+                || translation.x > WINDOW_WIDTH / 2. + 100.0
+                || translation.x < -WINDOW_WIDTH / 2. - 100.0{
 
 
-pub fn moving_syringes(mut query: Query<(Entity, &Velosity, &mut Transform)>, mut commands: Commands) {
-    for (entity, velocity, mut transform) in query.iter_mut() {
-        let mut translation = &mut transform.translation;
-        translation.x += velocity.x * SPEED_SYRINGE;
-        translation.y += velocity.y * SPEED_SYRINGE;
+                commands.entity(entity).despawn();
 
-        if translation.y > WINDOW_HEIGHT / 2. + 100.0
-            || translation.y < -WINDOW_HEIGHT / 2. - 100.0
-            || translation.x > WINDOW_WIDTH / 2. + 100.0
-            || translation.x < -WINDOW_WIDTH / 2. - 100.0{
-
-
-            commands.entity(entity).despawn();
-
+            }
         }
-
     }
 }
-
 
 
 pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syringe>>){
@@ -321,17 +317,14 @@ impl Plugin for PlayerPlugin  {
                 .with_system(leave_main_room)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
-                .with_system(moving_syringes)
                 .with_system(syringe_hit))
             .add_system_set(SystemSet::on_update(GameState::Room1)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
-                .with_system(moving_syringes)
                 .with_system(syringe_hit))
             .add_system_set(SystemSet::on_update(GameState::Room2)
                 .with_system(control_direction_syringe)
                 .with_system(move_player)
-                .with_system(moving_syringes)
                 .with_system(syringe_hit))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
                 .with_system(despawn_player)

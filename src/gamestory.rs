@@ -86,6 +86,8 @@ pub fn spawn_continue_button(commands: &mut Commands, asset_server: &AssetServer
         style: Style {
             align_self: AlignSelf::Center,
             align_content: AlignContent::Center,
+            justify_content: JustifyContent::Center,
+            flex_direction: FlexDirection::Column,
             size: Size::new(Val::Percent(20.0), Val::Percent(10.0)),
             ..default()
         },
@@ -94,10 +96,6 @@ pub fn spawn_continue_button(commands: &mut Commands, asset_server: &AssetServer
         ..default()
     }).with_children(|comands| {
         comands.spawn(TextBundle {
-            style: Style{
-                align_self: AlignSelf::Baseline,
-                ..default()
-            },
             text: Text::from_section(text, button_style.clone()),
             ..default()
         });

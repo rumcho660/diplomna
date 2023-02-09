@@ -7,6 +7,8 @@ use crate::{GameState, SPRITE_PLAYER_SIZE, SPRITE_WALL_SIZE, TypeDeath, WINDOW_H
 use crate::player::{Health, Player};
 
 
+pub const ROOMS_SIZE: f32 = 8.0;
+
 #[derive(Component)]
 pub struct RoomsPlugin;
 
@@ -162,28 +164,35 @@ pub fn wall_blocks_build(mut commands: Commands, asset_server: Res<AssetServer>)
     }
 }
 
+pub fn room1_furniture(commands: &mut Commands, asset_server: &AssetServer){
 
-pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
-    let mut i =0;
+}
 
-    while i<10 {
-        let range = 0.0f64..100.0f64;
-        let mut rng = thread_rng();
-        let odds = rng.gen_range(range.clone());
+pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
 
-        if odds>=0.0 && odds<=50.0{
-            println!("room1");
-        }
+}
 
+pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer) -> &'static str {
+    let range = 0.0f64..100.0f64;
+    let odds = thread_rng().gen_range(range);
+    let mut room= "";
 
-
-        if odds>=50.0 && odds<=100.0{
-            println!("room2");
-        }
-        i += 1;
-
+    if odds>=0.0 && odds<=50.0{
+        room1_furniture(&mut commands, &asset_server);
+        room = "Room1.png";
     }
 
+
+
+    else if odds>=50.0 && odds<=100.0{
+        room2_furniture(&mut commands, &asset_server);
+        room = "Room2.png";
+    }
+    return room;
+}
+
+
+pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
     let main_floor = asset_server.load("Main_room.png");
 
     commands.spawn(
@@ -191,7 +200,7 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
             texture: main_floor.clone(),
             transform: Transform{
                 translation: Vec3::new(0.0, 0.0, 0.0),
-                scale: Vec3::splat(8.0),
+                scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
             ..default()
@@ -201,29 +210,16 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
 
 
 
-pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
+pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>){
 
-    let mut room1= asset_surver.load("Main_room.png");
-    let range = 0.0f64..100.0f64;
-    let odds = thread_rng().gen_range(range);
-
-    if odds>=0.0 && odds<=50.0{
-        room1 = asset_surver.load("Room1.png");
-    }
-
-
-
-    else if odds>=50.0 && odds<=100.0{
-        room1 = asset_surver.load("Room2.png");
-    }
-
+    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server));
 
     commands.spawn(
         SpriteBundle {
             texture: room1.clone(),
             transform: Transform{
                 translation: Vec3::new(0.0, 0.0, 0.0),
-                scale: Vec3::splat(8.0),
+                scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
             ..default()
@@ -234,28 +230,16 @@ pub fn spawn_room1(mut commands: Commands, asset_surver: Res<AssetServer>){
 
 
 
-pub fn spawn_room2(mut commands: Commands, asset_surver: Res<AssetServer>){
-    let mut room2= asset_surver.load("Main_room.png");
-    let range = 0.0f64..100.0f64;
-    let odds = thread_rng().gen_range(range);
+pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>){
 
-    if odds>=0.0 && odds<=50.0{
-        room2 = asset_surver.load("Room1.png");
-    }
-
-
-
-    else if odds>=50.0 && odds<=100.0{
-        room2 = asset_surver.load("Room2.png");
-    }
-
+    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server));
 
     commands.spawn(
         SpriteBundle {
             texture: room2.clone(),
             transform: Transform{
                 translation: Vec3::new(0.0, 0.0, 0.0),
-                scale: Vec3::splat(8.0),
+                scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
             ..default()
@@ -307,7 +291,7 @@ pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Comma
         for  transform_wall in query_wall.iter()  {
             let wall_scale = Vec2::from(transform_wall.scale.xy());
 
-            let collide = collide(
+            let collide_wall = collide(
                 transform_player.translation,
                 SPRITE_PLAYER_SIZE * player_scale,
                 transform_wall.translation,
@@ -315,7 +299,7 @@ pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Comma
             );
 
 
-            if let Some(_) = collide{
+            if let Some(_) = collide_wall{
                 type_dead.0 = 2;
 
                 health.value -= 4;
