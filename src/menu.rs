@@ -81,6 +81,7 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>){
             justify_content: JustifyContent::Center,
             align_self: AlignSelf::Center,
             align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
             ..default()
         },
         background_color: BackgroundColor::from(Color::BLACK),
@@ -88,11 +89,6 @@ pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>){
     }).insert(MainMenu)
         .with_children(|commands|{
             commands.spawn(TextBundle{
-                style: Style{
-                    align_self: AlignSelf::Center,
-                    flex_direction: FlexDirection::Column,
-                    ..default()
-                },
                 text: Text::from_section("Dr.Covid", text_style_menu.clone()),
                 ..default()
             });
@@ -117,9 +113,9 @@ pub fn spawn_button(commands: &mut Commands, asset_server: &AssetServer, text: &
 
     commands.spawn(ButtonBundle {
         style: Style {
+            justify_content: JustifyContent::Center,
             align_self: AlignSelf::Center,
-            align_content: AlignContent::Center,
-            flex_direction: FlexDirection::RowReverse,
+            align_items: AlignItems::Center,
             size: Size::new(Val::Percent(20.0), Val::Percent(20.0)),
             ..default()
         },
@@ -129,7 +125,6 @@ pub fn spawn_button(commands: &mut Commands, asset_server: &AssetServer, text: &
     }).with_children(|comands| {
         comands.spawn(TextBundle {
             style: Style{
-                align_self: AlignSelf::Center,
                 margin: UiRect::all(Val::Percent(3.0)),
                 ..default()
             },

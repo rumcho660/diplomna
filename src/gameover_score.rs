@@ -38,6 +38,7 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
             justify_content: JustifyContent::Center,
             align_self: AlignSelf::Center,
             align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
             ..default()
         },
         background_color: BackgroundColor::from(Color::BLACK),
@@ -47,7 +48,6 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
             commands.spawn(TextBundle{
                 style: Style{
                     align_self: AlignSelf::Center,
-                    flex_direction: FlexDirection::Column,
                     ..default()
                 },
                 text: Text::from_section("Game Over    Your score is:", text_style_score.clone()),
@@ -58,7 +58,6 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
         commands.spawn(TextBundle{
             style: Style{
                 align_self: AlignSelf::Center,
-                flex_direction: FlexDirection::Column,
                 ..default()
             },
             text: Text::from_section(deadcount.0.to_string(),  text_style_score.clone()),
@@ -69,7 +68,6 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
         commands.spawn(TextBundle{
             style: Style{
                 align_self: AlignSelf::Center,
-                flex_direction: FlexDirection::Column,
                 ..default()
             },
             text: Text::from_section(type_of_dead,  text_style_score.clone()),

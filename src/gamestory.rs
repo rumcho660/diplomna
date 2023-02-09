@@ -51,6 +51,7 @@ pub fn setup_game_story(mut commands: Commands, asset_server: Res<AssetServer>){
             justify_content: JustifyContent::Center,
             align_self: AlignSelf::Center,
             align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
             ..default()
         },
         background_color: BackgroundColor::from(Color::BLACK),
@@ -58,16 +59,11 @@ pub fn setup_game_story(mut commands: Commands, asset_server: Res<AssetServer>){
     }).insert(Story)
         .with_children(|commands|{
             commands.spawn(TextBundle{
-                style: Style{
-                    align_self: AlignSelf::Center,
-                    flex_direction: FlexDirection::Column,
-                    ..default()
-                },
-                text: Text::from_section("The COVID-19 pandemic, also known as the coronavirus pandemic,
-                                               The virus was so deadly that it took almost half of the human population
-                                               But hope was not lost. In United Kingdom there was a special hospital.
-                                               The only doctor there was a man of many talents, but the most interesting was his immortality
-                                               For that reason he was tasked to sure the whole kingdom
+                text: Text::from_section("
+                                               The virus was so deadly that it took almost half of the human population\n
+                                               But hope was not lost. In United Kingdom there was a special hospital.\n
+                                               The only doctor there was a man of many talents, but the most interesting was his immortality\n
+                                               For that reason he was tasked to sure the whole kingdom\n
                                                Will he succeed...", text_style_menu.clone()),
                 ..default()
             });
