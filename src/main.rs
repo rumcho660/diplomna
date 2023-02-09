@@ -49,7 +49,7 @@ fn setup_camera(mut commands: Commands) {
 
 fn main() {
     App::new()
-        .insert_resource(TimerEndGame(Timer::from_seconds(11.0, TimerMode::Once)))
+        .insert_resource(TimerEndGame(Timer::from_seconds(21.0, TimerMode::Once)))
         .insert_resource(DeadCount(0))
         .insert_resource(DeadChangeRoom(0))
         .insert_resource(LimitDeads(0))
