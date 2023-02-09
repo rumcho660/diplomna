@@ -165,11 +165,73 @@ pub fn wall_blocks_build(mut commands: Commands, asset_server: Res<AssetServer>)
 }
 
 pub fn room1_furniture(commands: &mut Commands, asset_server: &AssetServer){
+    let bed = asset_server.load("Bed.png");
+    let mut right_side= 0.0;
+    let mut left_side= 0.0;
+    let mut i =0;
 
+    while i <=2{
+
+        commands.spawn(
+            SpriteBundle {
+                texture: bed.clone(),
+                transform: Transform{
+                    translation: Vec3::new(WINDOW_WIDTH/2.0 - 200.0, right_side, 1.0),
+                    scale: Vec3::splat(2.5),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Bed);
+
+        right_side += 90.0;
+
+        commands.spawn(
+            SpriteBundle {
+                texture: bed.clone(),
+                transform: Transform{
+                    translation: Vec3::new(-WINDOW_WIDTH/2.0 + 200.0, left_side, 1.0),
+                    scale: Vec3::splat(2.5),
+                    ..default()
+                },
+                ..default()
+            }
+        ).insert(Bed);
+
+        left_side -= 90.0;
+
+        i += 1;
+    }
 }
 
 pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
+    let something = asset_server.load("Something.png");
 
+
+    commands.spawn(
+        SpriteBundle {
+            texture: something.clone(),
+            transform: Transform{
+                translation: Vec3::new(170.0, 80.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(Something);
+
+
+    commands.spawn(
+        SpriteBundle {
+            texture: something.clone(),
+            transform: Transform{
+                translation: Vec3::new(-170.0, -80.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(Something);
 }
 
 pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer) -> &'static str {
@@ -199,7 +261,6 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
         SpriteBundle {
             texture: main_floor.clone(),
             transform: Transform{
-                translation: Vec3::new(0.0, 0.0, 0.0),
                 scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
@@ -218,7 +279,6 @@ pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>){
         SpriteBundle {
             texture: room1.clone(),
             transform: Transform{
-                translation: Vec3::new(0.0, 0.0, 0.0),
                 scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
@@ -238,7 +298,6 @@ pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>){
         SpriteBundle {
             texture: room2.clone(),
             transform: Transform{
-                translation: Vec3::new(0.0, 0.0, 0.0),
                 scale: Vec3::splat(ROOMS_SIZE),
                 ..default()
             },
@@ -278,6 +337,20 @@ pub fn despawn_room2(mut commands: Commands, query: Query< Entity, With<Room1>>)
     }
 }
 
+pub fn despawn_bed(mut commands: Commands, query: Query< Entity, With<Bed>>){
+    for beds in query.iter(){
+        commands.entity(beds).despawn();
+    }
+}
+
+pub fn despawn_something(mut commands: Commands, query: Query< Entity, With<Something>>){
+    for somethings in query.iter(){
+        commands.entity(somethings).despawn();
+    }
+}
+
+
+
 
 
 
@@ -302,7 +375,7 @@ pub fn hitting_wall(mut app_state: ResMut<State<GameState>>, mut commands: Comma
             if let Some(_) = collide_wall{
                 type_dead.0 = 2;
 
-                health.value -= 4;
+                health.value -= 300;
                 commands.entity(entity).despawn();
                 app_state.set(GameState::GameOver);
             }
@@ -321,14 +394,20 @@ impl Plugin for RoomsPlugin{
             .add_system_set(SystemSet::on_update(GameState::MainRoom)
                 .with_system(hitting_wall))
             .add_system_set(SystemSet::on_enter(GameState::Room1)
-                .with_system(hitting_wall)
                 .with_system(despawn_main_floor)
                 .with_system(spawn_room1))
+            .add_system_set(SystemSet::on_update(GameState::Room1)
+                .with_system(hitting_wall))
             .add_system_set(SystemSet::on_enter(GameState::Room2)
-                .with_system(hitting_wall)
                 .with_system(despawn_room1)
+                .with_system(despawn_bed)
+                .with_system(despawn_something)
                 .with_system(spawn_room2))
+            .add_system_set(SystemSet::on_update(GameState::Room2)
+                .with_system(hitting_wall))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
+                .with_system(despawn_something)
+                .with_system(despawn_bed)
                 .with_system(despawn_blocks)
                 .with_system(despawn_room2));
     }
