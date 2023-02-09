@@ -1,6 +1,6 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide};
-use crate::player::{Health, Player, Velosity};
+use crate::player::{Health, LimitDeads, Player, Velosity};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE, TypeDeath};
 use bevy::math::Vec3Swizzles;
 use crate::player::Damage;
@@ -21,7 +21,7 @@ pub struct AnimationTimerEnemy(pub Timer);
 
 
 
-pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+pub fn spawn_enemy_wave1(commands: &mut Commands, asset_server: &AssetServer, texture_atlases: &mut Assets<TextureAtlas>){
     let texture_handle = asset_server.load("Enemy_final.png");
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
@@ -65,45 +65,16 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         .insert(Health{value: 5})
         .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y: 0.0});
+}
 
 
 
-    /*commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            transform: Transform{
-                translation: Vec3::new(230.0, -200.0, 1.0),
-                scale: Vec3::splat(2.5),
-                ..default()
-            },
-            visibility: Visibility::VISIBLE,
-            ..default()
 
-        },
-        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Enemy)
-        .insert(Health{value: 5})
-        .insert(Damage{value: 2})
-        .insert(Velosity{x: 0.0, y: 0.0});
-
-
-    commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            transform: Transform{
-                translation: Vec3::new(-200.0, -100.0, 1.0),
-                scale: Vec3::splat(2.5),
-                ..default()
-            },
-            visibility: Visibility::VISIBLE,
-            ..default()
-
-        },
-        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Enemy)
-        .insert(Health{value: 5})
-        .insert(Damage{value: 2})
-        .insert(Velosity{x: 0.0, y: 0.0});
+pub fn spawn_enemy_wave2(commands: &mut Commands, asset_server: &AssetServer, texture_atlases: &mut Assets<TextureAtlas>){
+    let texture_handle = asset_server.load("Enemy_final.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
 
 
@@ -111,7 +82,7 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(200.0, 200.0, 1.0),
+                translation: Vec3::new(0.0, 400.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -121,10 +92,67 @@ pub fn spawn_enemy_wave1(mut commands: Commands, asset_server: Res<AssetServer>,
         },
         AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Enemy)
-        .insert(Health{value: 5})
-        .insert(Damage{value: 2})
+        .insert(Health{value: 8})
+        .insert(Damage{value: 4})
         .insert(Velosity{x: 0.0, y: 0.0});
-       */
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(-370.0, 14.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 8})
+        .insert(Damage{value: 4})
+        .insert(Velosity{x: 0.0, y: 0.0});
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(100.0, 304.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 8})
+        .insert(Damage{value: 4})
+        .insert(Velosity{x: 0.0, y: 0.0});
+
+
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle.clone(),
+            transform: Transform{
+                translation: Vec3::new(-230.0, 250.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            visibility: Visibility::VISIBLE,
+            ..default()
+
+        },
+        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    )).insert(Enemy)
+        .insert(Health{value: 8})
+        .insert(Damage{value: 4})
+        .insert(Velosity{x: 0.0, y: 0.0});
 }
 
 
@@ -183,7 +211,11 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 
 
 
-pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>, query_enemy: Query<(&Damage, &Transform), With<Enemy>>, mut app_state: ResMut<State<GameState>>, mut type_dead: ResMut<TypeDeath> ){
+pub fn enemy_attack(mut commands: Commands,
+                    mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>,
+                    query_enemy: Query<(&Damage, &Transform), With<Enemy>>,
+                    mut app_state: ResMut<State<GameState>>,
+                    mut type_dead: ResMut<TypeDeath>){
 
     for (player, mut health,  transform_player) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -218,13 +250,9 @@ pub fn enemy_attack(mut commands: Commands, mut query_player: Query<(Entity, &mu
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Room1)
-            .with_system(spawn_enemy_wave1))
-            .add_system_set(SystemSet::on_update(GameState::Room1)
+        app.add_system_set(SystemSet::on_update(GameState::Room1)
                 .with_system(move_enemy)
                 .with_system(enemy_attack))
-            .add_system_set(SystemSet::on_enter(GameState::Room2)
-                .with_system(spawn_enemy_wave1))
             .add_system_set(SystemSet::on_update(GameState::Room2)
                 .with_system(move_enemy)
                 .with_system(enemy_attack))

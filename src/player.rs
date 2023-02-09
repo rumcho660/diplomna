@@ -35,6 +35,9 @@ pub struct Position{
 #[derive(Resource)]
 pub struct DeadCount(pub i32);
 
+#[derive(Resource)]
+pub struct LimitDeads(pub i32);
+
 
 #[derive(Resource)]
 pub struct DeadChangeRoom(pub i32);
@@ -262,15 +265,13 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_play
 }
 
 
-pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syringe>>){
-    for syringes in query.iter(){
-        commands.entity(syringes).despawn_recursive();
-    }
-}
 
-
-
-pub fn syringe_hit(mut app_state: ResMut<State<GameState>>, mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>, mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>, mut deadcount: ResMut<DeadCount>, mut dead_change_room: ResMut<DeadChangeRoom> ){
+pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
+                   mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>,
+                   mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
+                   mut deadcount: ResMut<DeadCount>,
+                   mut dead_change_room: ResMut<DeadChangeRoom>,
+                   mut limit_deads: ResMut<LimitDeads>){
 
     for (syringe, damage ,transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
@@ -298,7 +299,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>, mut commands: Comman
                     dead_change_room.0 += 1;
 
 
-                    if dead_change_room.0 == 2 {
+                    if dead_change_room.0 == limit_deads.0 {
                         app_state.set(GameState::Room2);
                     }
                 }
@@ -307,7 +308,11 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>, mut commands: Comman
     }
 }
 
-
+pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syringe>>){
+    for syringes in query.iter(){
+        commands.entity(syringes).despawn_recursive();
+    }
+}
 
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {

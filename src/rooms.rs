@@ -4,7 +4,8 @@ use rand::Rng;
 use rand::thread_rng;
 use bevy::sprite::collide_aabb::collide;
 use crate::{GameState, SPRITE_BED_SIZE, SPRITE_PLAYER_SIZE, SPRITE_SOMETHING_SIZE, SPRITE_WALL_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
-use crate::player::{Health, Player};
+use crate::enemy::{spawn_enemy_wave1, spawn_enemy_wave2};
+use crate::player::{Health, LimitDeads, Player};
 
 
 pub const ROOMS_SIZE: f32 = 8.0;
@@ -234,13 +235,15 @@ pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
     ).insert(Something);
 }
 
-pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer) -> &'static str {
+pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer, mut texture_atlases: ResMut<Assets<TextureAtlas>>, mut limit_deads: ResMut<LimitDeads>) -> &'static str {
     let range = 0.0f64..100.0f64;
     let odds = thread_rng().gen_range(range);
     let mut room= "";
 
     if odds>=0.0 && odds<=50.0{
         room1_furniture(&mut commands, &asset_server);
+        spawn_enemy_wave1(&mut commands, &asset_server, &mut texture_atlases);
+        limit_deads.0 = 2;
         room = "Room1.png";
     }
 
@@ -248,6 +251,8 @@ pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer) -> &
 
     else if odds>=50.0 && odds<=100.0{
         room2_furniture(&mut commands, &asset_server);
+        spawn_enemy_wave2(&mut commands, &asset_server, &mut texture_atlases);
+        limit_deads.0 = 4;
         room = "Room2.png";
     }
     return room;
@@ -271,9 +276,9 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
 
 
 
-pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases:  ResMut<Assets<TextureAtlas>>,mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server));
+    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server, texture_atlases, limit_deads));
 
     commands.spawn(
         SpriteBundle {
@@ -290,9 +295,9 @@ pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>){
 
 
 
-pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases:  ResMut<Assets<TextureAtlas>>, mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server));
+    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server, texture_atlases, limit_deads));
 
     commands.spawn(
         SpriteBundle {
