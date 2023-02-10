@@ -29,8 +29,11 @@ pub fn game_score(mut commands: Commands,
     else if type_dead.0 == 4 {
         type_of_dead = "Death by deadly saline stand";
     }
-    else {
+    else if type_dead.0 == 4 {
         type_of_dead = "Death by timer";
+    }
+    else {
+        type_of_dead = "Congrats you beat the demo of Dr. Covid"
     }
 
 
@@ -39,7 +42,7 @@ pub fn game_score(mut commands: Commands,
 
     let text_style_score = TextStyle {
         font: font_score,
-        font_size: 69.0,
+        font_size: 30.0,
         color: Color::CRIMSON,
     };
 

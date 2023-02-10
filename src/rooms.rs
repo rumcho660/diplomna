@@ -1,5 +1,6 @@
 use bevy:: prelude::*;
 use bevy::math::Vec3Swizzles;
+use bevy::reflect::struct_partial_eq;
 use rand::Rng;
 use rand::thread_rng;
 use bevy::sprite::collide_aabb::collide;
@@ -380,11 +381,11 @@ pub fn despawn_something(mut commands: Commands,
 
 
 pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
-                    mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
-                    query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
-                    query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
-                    query_saline_stand: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
-                    mut type_dead: ResMut<TypeDeath> ){
+                       mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
+                       query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
+                       query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
+                       query_saline_stand: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
+                       mut type_dead: ResMut<TypeDeath> ){
 
     for (entity, mut transform_player, mut health) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -399,8 +400,9 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
                 SPRITE_WALL_SIZE * wall_scale,
             );
 
-
             if let Some(_) = collide_wall{
+
+
                 type_dead.0 = 2;
 
                 health.value -= 300;

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
 
@@ -87,7 +87,7 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player( keyboard_input: Res<Input<KeyCode>>,
+pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
                     mut query: Query< (&mut Velosity, &mut Transform), With<Player>>,
                     time: Res<Time>,
                     texture_atlases: Res<Assets<TextureAtlas>>,
