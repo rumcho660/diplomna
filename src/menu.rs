@@ -58,7 +58,8 @@ pub fn quit_button_clicked(
 
 
 
-pub fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn setup_menu(mut commands: Commands, 
+                  asset_server: Res<AssetServer>){
     let start_button1 = spawn_button(&mut commands, &asset_server, "Start", Color::BLACK);
     commands.entity(start_button1).insert(StartButton);
 
@@ -116,23 +117,19 @@ pub fn spawn_button(commands: &mut Commands, asset_server: &AssetServer, text: &
             justify_content: JustifyContent::Center,
             align_self: AlignSelf::Center,
             align_items: AlignItems::Center,
-            size: Size::new(Val::Percent(20.0), Val::Percent(20.0)),
+            flex_direction: FlexDirection::Column,
+            size: Size::new(Val::Percent(10.0), Val::Percent(10.0)),
             ..default()
         },
         background_color: color.into(),
 
         ..default()
-    }).with_children(|comands| {
-        comands.spawn(TextBundle {
-            style: Style{
-                margin: UiRect::all(Val::Percent(3.0)),
-                ..default()
-            },
+    }).with_children(|commands| {
+        commands.spawn(TextBundle {
             text: Text::from_section(text, button_style.clone()),
             ..default()
         });
-    })
-        .id()
+    }).id()
 }
 
 

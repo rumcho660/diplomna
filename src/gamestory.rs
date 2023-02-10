@@ -31,7 +31,8 @@ pub fn continue_button_clicked(
 }
 
 
-pub fn setup_game_story(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn setup_game_story(mut commands: Commands,
+                        asset_server: Res<AssetServer>){
     let start_button1 = spawn_continue_button(&mut commands, &asset_server, "[CONTINUE]", Color::BLACK);
     commands.entity(start_button1).insert(ContinueButton);
 
@@ -60,11 +61,11 @@ pub fn setup_game_story(mut commands: Commands, asset_server: Res<AssetServer>){
         .with_children(|commands|{
             commands.spawn(TextBundle{
                 text: Text::from_section("
-                                               The virus was so deadly that it took almost half of the human population\n
-                                               But hope was not lost. In United Kingdom there was a special hospital.\n
-                                               The only doctor there was a man of many talents, but the most interesting was his immortality\n
-                                               For that reason he was tasked to sure the whole kingdom\n
-                                               Will he succeed...", text_style_menu.clone()),
+                                         The virus was so deadly that it took almost half of the human population\n
+                                           But hope was not lost. In United Kingdom there was a special hospital.\n
+                                   The only doctor there was a man of many talents, but the most interesting was his immortality\n
+                                              For that reason he was tasked to sure the whole kingdom\n
+                                                                   Will he succeed...", text_style_menu.clone()),
                 ..default()
             });
 

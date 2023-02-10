@@ -59,7 +59,9 @@ pub struct Damage{
 
 
 
-pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases: ResMut<Assets<TextureAtlas>>){
+pub fn spawn_player(mut commands: Commands,
+                    asset_server: Res<AssetServer>,
+                    mut texture_atlases: ResMut<Assets<TextureAtlas>>){
     let texture_handle = asset_server.load("Doctor_Covid_final.png");
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
@@ -85,7 +87,11 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
     }
 }
 
-pub fn move_player( keyboard_input: Res<Input<KeyCode>>, mut query: Query< (&mut Velosity, &mut Transform), With<Player>>, time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+pub fn move_player( keyboard_input: Res<Input<KeyCode>>,
+                    mut query: Query< (&mut Velosity, &mut Transform), With<Player>>,
+                    time: Res<Time>,
+                    texture_atlases: Res<Assets<TextureAtlas>>,
+                    mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
     for (mut velocity ,mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             velocity.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
@@ -148,14 +154,19 @@ pub fn move_player( keyboard_input: Res<Input<KeyCode>>, mut query: Query< (&mut
 }
 
 
-pub fn leave_main_room(mut app_state: ResMut<State<GameState>>, keyboard_input: Res<Input<KeyCode>> ){
+pub fn leave_main_room(mut app_state: ResMut<State<GameState>>,
+                       keyboard_input: Res<Input<KeyCode>> ){
     if keyboard_input.pressed(KeyCode::Space){
         app_state.set(GameState::Room1).expect("leaving failed");
     }
 }
 
 
-pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>, query_player: Query<&Transform, (With<Player>, Without<Syringe>)>, mut query_enemy: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>, asset_server: Res<AssetServer>, mut commands: Commands){
+pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
+                                 query_player: Query<&Transform, (With<Player>, Without<Syringe>)>,
+                                 mut query_enemy: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>,
+                                 asset_server: Res<AssetServer>,
+                                 mut commands: Commands){
     let syringe_right  = asset_server.load("Syringe_right.png");
     let syringe_left  = asset_server.load("Syringe_left.png");
     let syringe_up  = asset_server.load("Syringe_up.png");
@@ -293,7 +304,6 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
                 if health.value == 0{
                     deadcount.0 += 10;
-                    println!("{}", deadcount.0);
                     commands.entity(enemy).despawn();
 
                     dead_change_room.0 += 1;
@@ -308,7 +318,8 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
     }
 }
 
-pub fn despawn_syringes(mut commands: Commands, query: Query<Entity, With<Syringe>>){
+pub fn despawn_syringes(mut commands: Commands,
+                        query: Query<Entity, With<Syringe>>){
     for syringes in query.iter(){
         commands.entity(syringes).despawn_recursive();
     }

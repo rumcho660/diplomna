@@ -12,7 +12,12 @@ pub struct TimerItem;
 #[derive(Component)]
 pub struct TimerPlugin;
 
-pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMut<TimerEndGame>, mut _exit: EventWriter<AppExit>, mut commands: Commands, asset_server: Res<AssetServer>, mut app_state: ResMut<State<GameState>>){
+pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
+                          mut timer_end: ResMut<TimerEndGame>,
+                          mut _exit: EventWriter<AppExit>,
+                          mut commands: Commands,
+                          asset_server: Res<AssetServer>,
+                          mut app_state: ResMut<State<GameState>>){
     let font1 = asset_server.load("ARCADECLASSIC.TTF");
 
     let text_style = TextStyle {
@@ -278,7 +283,8 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>, mut timer_end: ResMu
 
 }
 
-pub fn destroy_timer_el(mut commands: Commands, query: Query<Entity, With<TimerItem>>){
+pub fn destroy_timer_el(mut commands: Commands,
+                        query: Query<Entity, With<TimerItem>>){
     for timer in query.iter() {
         commands.entity(timer).despawn_recursive();
     }

@@ -35,7 +35,8 @@ pub struct Something;
 pub struct MainFloor;
 
 
-pub fn wall_blocks_build(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn wall_blocks_build(mut commands: Commands,
+                         asset_server: Res<AssetServer>){
     let block = asset_server.load("Block.png");
 
 
@@ -165,7 +166,8 @@ pub fn wall_blocks_build(mut commands: Commands, asset_server: Res<AssetServer>)
     }
 }
 
-pub fn room1_furniture(commands: &mut Commands, asset_server: &AssetServer){
+pub fn room1_furniture(commands: &mut Commands,
+                       asset_server: &AssetServer){
     let bed = asset_server.load("Bed.png");
     let mut right_side= 0.0;
     let mut left_side= 0.0;
@@ -205,14 +207,15 @@ pub fn room1_furniture(commands: &mut Commands, asset_server: &AssetServer){
     }
 }
 
-pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
-    let something = asset_server.load("Something.png");
+pub fn room2_furniture(commands: &mut Commands,
+                       asset_server: &AssetServer){
+    let something = asset_server.load("Saline_stand.png");
 
 
     commands.spawn(
         SpriteBundle {
             texture: something.clone(),
-            transform: Transform{
+            transform: Transform {
                 translation: Vec3::new(170.0, 80.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
@@ -226,7 +229,7 @@ pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
         SpriteBundle {
             texture: something.clone(),
             transform: Transform{
-                translation: Vec3::new(-170.0, -80.0, 1.0),
+                translation: Vec3::new(-170.0, 80.0, 1.0),
                 scale: Vec3::splat(2.5),
                 ..default()
             },
@@ -235,7 +238,10 @@ pub fn room2_furniture(commands: &mut Commands, asset_server: &AssetServer){
     ).insert(Something);
 }
 
-pub fn choose_room(mut commands: &mut Commands, asset_server: &AssetServer, mut texture_atlases: ResMut<Assets<TextureAtlas>>, mut limit_deads: ResMut<LimitDeads>) -> &'static str {
+pub fn choose_room(mut commands: &mut Commands,
+                   asset_server: &AssetServer,
+                   mut texture_atlases: &mut Assets<TextureAtlas>,
+                   mut limit_deads: &mut LimitDeads) -> &'static str {
     let range = 0.0f64..100.0f64;
     let odds = thread_rng().gen_range(range);
     let mut room= "";
@@ -276,9 +282,12 @@ pub fn spawn_main_room(mut commands: Commands, asset_server: Res<AssetServer>){
 
 
 
-pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases:  ResMut<Assets<TextureAtlas>>,mut limit_deads: ResMut<LimitDeads>){
+pub fn spawn_room1(mut commands: Commands,
+                   asset_server: Res<AssetServer>,
+                   mut texture_atlases:  ResMut<Assets<TextureAtlas>>,
+                   mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server, texture_atlases, limit_deads));
+    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
 
     commands.spawn(
         SpriteBundle {
@@ -295,9 +304,12 @@ pub fn spawn_room1(mut commands: Commands, asset_server: Res<AssetServer>, mut t
 
 
 
-pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>, mut texture_atlases:  ResMut<Assets<TextureAtlas>>, mut limit_deads: ResMut<LimitDeads>){
+pub fn spawn_room2(mut commands: Commands,
+                   asset_server: Res<AssetServer>,
+                   mut texture_atlases:  ResMut<Assets<TextureAtlas>>,
+                   mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server, texture_atlases, limit_deads));
+    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
 
     commands.spawn(
         SpriteBundle {
@@ -318,37 +330,43 @@ pub fn spawn_room2(mut commands: Commands, asset_server: Res<AssetServer>, mut t
 
 
 //despawns
-pub fn despawn_blocks(mut commands: Commands, query: Query< Entity, With<Wall>>){
+pub fn despawn_blocks(mut commands: Commands,
+                      query: Query< Entity, With<Wall>>){
     for blocks in query.iter(){
         commands.entity(blocks).despawn();
     }
 }
 
-pub fn despawn_main_floor(mut commands: Commands, query: Query< Entity, With<MainFloor>>){
+pub fn despawn_main_floor(mut commands: Commands,
+                          query: Query< Entity, With<MainFloor>>){
     for floor in query.iter(){
         commands.entity(floor).despawn();
     }
 }
 
-pub fn despawn_room1(mut commands: Commands, query: Query< Entity, With<Room1>>){
+pub fn despawn_room1(mut commands: Commands,
+                     query: Query< Entity, With<Room1>>){
     for room1 in query.iter(){
         commands.entity(room1).despawn();
     }
 }
 
-pub fn despawn_room2(mut commands: Commands, query: Query< Entity, With<Room1>>){
+pub fn despawn_room2(mut commands: Commands,
+                     query: Query< Entity, With<Room1>>){
     for room2 in query.iter(){
         commands.entity(room2).despawn();
     }
 }
 
-pub fn despawn_bed(mut commands: Commands, query: Query< Entity, With<Bed>>){
+pub fn despawn_bed(mut commands: Commands,
+                   query: Query< Entity, With<Bed>>){
     for beds in query.iter(){
         commands.entity(beds).despawn();
     }
 }
 
-pub fn despawn_something(mut commands: Commands, query: Query< Entity, With<Something>>){
+pub fn despawn_something(mut commands: Commands,
+                         query: Query< Entity, With<Something>>){
     for somethings in query.iter(){
         commands.entity(somethings).despawn();
     }
@@ -365,7 +383,7 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
                     mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
                     query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
                     query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
-                    query_something: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
+                    query_saline_stand: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
                     mut type_dead: ResMut<TypeDeath> ){
 
     for (entity, mut transform_player, mut health) in query_player.iter_mut(){
@@ -413,18 +431,18 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
         }
 
 
-        for  transform_something in query_something.iter()  {
-            let something_scale = Vec2::from(transform_something.scale.xy());
+        for  transform_saline_stand in query_saline_stand.iter()  {
+            let saline_stand_scale = Vec2::from(transform_saline_stand.scale.xy());
 
-            let collide_something = collide(
+            let collide_saline_stand = collide(
                 transform_player.translation,
                 SPRITE_PLAYER_SIZE * player_scale,
-                transform_something.translation,
-                SPRITE_SOMETHING_SIZE * something_scale,
+                transform_saline_stand.translation,
+                SPRITE_SOMETHING_SIZE * saline_stand_scale,
             );
 
 
-            if let Some(_) = collide_something{
+            if let Some(_) = collide_saline_stand{
                 type_dead.0 = 4;
 
                 health.value -= 300;
@@ -432,13 +450,6 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
                 app_state.set(GameState::GameOver);
             }
         }
-
-
-
-
-
-
-
     }
 }
 

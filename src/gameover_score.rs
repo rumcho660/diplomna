@@ -9,7 +9,10 @@ pub struct GameScore;
 pub struct CounterPLugin;
 
 
-pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadcount: Res<DeadCount>, mut type_dead: ResMut<TypeDeath>){
+pub fn game_score(mut commands: Commands,
+                  asset_server: Res<AssetServer>,
+                  deadcount: Res<DeadCount>,
+                  mut type_dead: ResMut<TypeDeath>){
     let mut type_of_dead;
 
     if type_dead.0 == 1 {
@@ -36,8 +39,8 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
 
     let text_style_score = TextStyle {
         font: font_score,
-        font_size: 30.0,
-        color: Color::WHITE,
+        font_size: 69.0,
+        color: Color::CRIMSON,
     };
 
     commands.spawn(NodeBundle{
@@ -54,30 +57,18 @@ pub fn game_score(mut commands: Commands, asset_server: Res<AssetServer>, deadco
     }).insert(GameScore)
         .with_children(|commands|{
             commands.spawn(TextBundle{
-                style: Style{
-                    align_self: AlignSelf::Center,
-                    ..default()
-                },
-                text: Text::from_section("Game Over    Your score is:", text_style_score.clone()),
+                text: Text::from_section("Game Over, Your score is:", text_style_score.clone()),
                 ..default()
             });
 
         }).with_children(|commands|{
         commands.spawn(TextBundle{
-            style: Style{
-                align_self: AlignSelf::Center,
-                ..default()
-            },
             text: Text::from_section(deadcount.0.to_string(),  text_style_score.clone()),
             ..default()
         });
 
     }).with_children(|commands|{
         commands.spawn(TextBundle{
-            style: Style{
-                align_self: AlignSelf::Center,
-                ..default()
-            },
             text: Text::from_section(type_of_dead,  text_style_score.clone()),
             ..default()
         });

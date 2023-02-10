@@ -21,7 +21,9 @@ pub struct AnimationTimerEnemy(pub Timer);
 
 
 
-pub fn spawn_enemy_wave1(commands: &mut Commands, asset_server: &AssetServer, texture_atlases: &mut Assets<TextureAtlas>){
+pub fn spawn_enemy_wave1(commands: &mut Commands,
+                         asset_server: &AssetServer,
+                         texture_atlases: &mut Assets<TextureAtlas>){
     let texture_handle = asset_server.load("Enemy_final.png");
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
@@ -70,7 +72,9 @@ pub fn spawn_enemy_wave1(commands: &mut Commands, asset_server: &AssetServer, te
 
 
 
-pub fn spawn_enemy_wave2(commands: &mut Commands, asset_server: &AssetServer, texture_atlases: &mut Assets<TextureAtlas>){
+pub fn spawn_enemy_wave2(commands: &mut Commands,
+                         asset_server: &AssetServer,
+                         texture_atlases: &mut Assets<TextureAtlas>){
     let texture_handle = asset_server.load("Enemy_final.png");
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
@@ -156,7 +160,8 @@ pub fn spawn_enemy_wave2(commands: &mut Commands, asset_server: &AssetServer, te
 }
 
 
-pub fn despawn_enemy(mut commands: Commands, mut query: Query<Entity, With<Enemy>>){
+pub fn despawn_enemy(mut commands: Commands,
+                     mut query: Query<Entity, With<Enemy>>){
     for enemy in query.iter_mut(){
         commands.entity(enemy).despawn();
     }
