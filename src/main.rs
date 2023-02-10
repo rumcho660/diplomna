@@ -14,7 +14,7 @@ use crate::enemy::EnemyPlugin;
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
 use crate::menu::MenusPlugin;
-use crate::player::{DeadChangeRoom, DeadCount, LimitDeads, PlayerPlugin, Position};
+use crate::player::{DeadChangeRoom, DeadCount, LimitDeads, PlayerPlugin};
 use crate::rooms::RoomsPlugin;
 use crate::sound::audio_game;
 use crate::timer::{TimerEndGame, TimerPlugin};

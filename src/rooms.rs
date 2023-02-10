@@ -1,6 +1,5 @@
 use bevy:: prelude::*;
 use bevy::math::Vec3Swizzles;
-use bevy::reflect::struct_partial_eq;
 use rand::Rng;
 use rand::thread_rng;
 use bevy::sprite::collide_aabb::collide;
@@ -288,7 +287,7 @@ pub fn spawn_room1(mut commands: Commands,
                    mut texture_atlases:  ResMut<Assets<TextureAtlas>>,
                    mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room1= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
+    let room1= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
 
     commands.spawn(
         SpriteBundle {
@@ -310,7 +309,7 @@ pub fn spawn_room2(mut commands: Commands,
                    mut texture_atlases:  ResMut<Assets<TextureAtlas>>,
                    mut limit_deads: ResMut<LimitDeads>){
 
-    let mut room2= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
+    let room2= asset_server.load(choose_room(&mut commands, &asset_server, &mut texture_atlases, &mut limit_deads));
 
     commands.spawn(
         SpriteBundle {
@@ -381,13 +380,13 @@ pub fn despawn_something(mut commands: Commands,
 
 
 pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
-                       mut commands: Commands, mut query_player: Query<(Entity, &mut Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
+                       mut commands: Commands, mut query_player: Query<(Entity, &Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
                        query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
                        query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
                        query_saline_stand: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
                        mut type_dead: ResMut<TypeDeath> ){
 
-    for (entity, mut transform_player, mut health) in query_player.iter_mut(){
+    for (entity, transform_player, mut health) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
 
         for  transform_wall in query_wall.iter()  {

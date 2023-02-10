@@ -12,8 +12,8 @@ pub struct CounterPLugin;
 pub fn game_score(mut commands: Commands,
                   asset_server: Res<AssetServer>,
                   deadcount: Res<DeadCount>,
-                  mut type_dead: ResMut<TypeDeath>){
-    let mut type_of_dead;
+                  type_dead: ResMut<TypeDeath>){
+    let type_of_dead;
 
     if type_dead.0 == 1 {
         type_of_dead = "Death by enemy";
@@ -76,7 +76,7 @@ pub fn game_score(mut commands: Commands,
             ..default()
         });
 
-    });;
+    });
 }
 
 

@@ -1,6 +1,6 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide};
-use crate::player::{Health, LimitDeads, Player, Velosity};
+use crate::player::{Health, Player, Velosity};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE, TypeDeath};
 use bevy::math::Vec3Swizzles;
 use crate::player::Damage;

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
 
@@ -95,6 +95,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
     for (mut velocity ,mut _transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             velocity.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
                 if timer.just_finished() {
@@ -282,7 +283,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
                    mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
-                   mut limit_deads: ResMut<LimitDeads>){
+                   limit_deads: ResMut<LimitDeads>){
 
     for (syringe, damage ,transform_syringe) in query_syringe.iter(){
         let syringe_scale = Vec2::from(transform_syringe.scale.xy());
