@@ -6,6 +6,9 @@ use crate::player::{DeadCount};
 pub struct GameScore;
 
 #[derive(Component)]
+pub struct BackMenu;
+
+#[derive(Component)]
 pub struct CounterPLugin;
 
 
@@ -29,13 +32,12 @@ pub fn game_score(mut commands: Commands,
     else if type_dead.0 == 4 {
         type_of_dead = "Death by deadly saline stand";
     }
-    else if type_dead.0 == 4 {
+    else if type_dead.0 == 5 {
         type_of_dead = "Death by timer";
     }
     else {
         type_of_dead = "Congrats you beat the demo of Dr. Covid"
     }
-
 
     let font_score = asset_server.load("FFFFORWA.TTF");
 
@@ -78,7 +80,6 @@ pub fn game_score(mut commands: Commands,
 
     });
 }
-
 
 impl Plugin for CounterPLugin{
     fn build(&self, app: &mut App) {
