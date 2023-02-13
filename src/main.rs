@@ -6,6 +6,7 @@ mod gamestory;
 mod enemy;
 mod rooms;
 mod gameover_score;
+mod items;
 
 use bevy:: prelude::*;
 use bevy::window::close_on_esc;
