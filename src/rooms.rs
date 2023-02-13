@@ -29,7 +29,7 @@ pub struct Bed;
 
 
 #[derive(Component)]
-pub struct Something;
+pub struct SalineStand;
 
 #[derive(Component)]
 pub struct MainFloor;
@@ -209,12 +209,12 @@ pub fn room1_furniture(commands: &mut Commands,
 
 pub fn room2_furniture(commands: &mut Commands,
                        asset_server: &AssetServer){
-    let something = asset_server.load("Saline_stand.png");
+    let saline_stand = asset_server.load("Saline_stand.png");
 
 
     commands.spawn(
         SpriteBundle {
-            texture: something.clone(),
+            texture: saline_stand.clone(),
             transform: Transform {
                 translation: Vec3::new(170.0, 80.0, 1.0),
                 scale: Vec3::splat(2.5),
@@ -222,12 +222,12 @@ pub fn room2_furniture(commands: &mut Commands,
             },
             ..default()
         }
-    ).insert(Something);
+    ).insert(SalineStand);
 
 
     commands.spawn(
         SpriteBundle {
-            texture: something.clone(),
+            texture: saline_stand.clone(),
             transform: Transform{
                 translation: Vec3::new(-170.0, 80.0, 1.0),
                 scale: Vec3::splat(2.5),
@@ -235,7 +235,19 @@ pub fn room2_furniture(commands: &mut Commands,
             },
             ..default()
         }
-    ).insert(Something);
+    ).insert(SalineStand);
+
+    commands.spawn(
+        SpriteBundle {
+            texture: saline_stand.clone(),
+            transform: Transform {
+                translation: Vec3::new(-10.0, 190.0, 1.0),
+                scale: Vec3::splat(2.5),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(SalineStand);
 }
 
 pub fn choose_room(mut commands: &mut Commands,
@@ -366,9 +378,9 @@ pub fn despawn_bed(mut commands: Commands,
 }
 
 pub fn despawn_something(mut commands: Commands,
-                         query: Query< Entity, With<Something>>){
-    for somethings in query.iter(){
-        commands.entity(somethings).despawn();
+                         query: Query< Entity, With<SalineStand>>){
+    for saline_stand in query.iter(){
+        commands.entity(saline_stand).despawn();
     }
 }
 
@@ -380,10 +392,10 @@ pub fn despawn_something(mut commands: Commands,
 
 
 pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
-                       mut commands: Commands, mut query_player: Query<(Entity, &Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<Something>)>,
-                       query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<Something>)>,
-                       query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<Something>)>,
-                       query_saline_stand: Query<&Transform, (With<Something>, Without<Player>, Without<Bed>, Without<Wall>)>,
+                       mut commands: Commands, mut query_player: Query<(Entity, &Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<SalineStand>)>,
+                       query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<SalineStand>)>,
+                       query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<SalineStand>)>,
+                       query_saline_stand: Query<&Transform, (With<SalineStand>, Without<Player>, Without<Bed>, Without<Wall>)>,
                        mut type_dead: ResMut<TypeDeath> ){
 
     for (entity, transform_player, mut health) in query_player.iter_mut(){
