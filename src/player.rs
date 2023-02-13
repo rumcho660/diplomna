@@ -80,6 +80,7 @@ pub fn spawn_player(mut commands: Commands,
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
         .insert(Health{value: 200})
+        .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y:0.0})
         .insert(Speed{value: 200.0})
         .insert(DoubleShot{value: false});
@@ -323,40 +324,41 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
 
 pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
-                   mut commands: Commands,
-                   query_syringe: Query<(Entity, &Transform), With<Syringe>>,
+                   mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>,
                    mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
+                   mut query_player: Query<&Damage, With<Player>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
                    limit_deads: ResMut<LimitDeads>){
+    for damage in query_player.iter_mut(){
+        for (syringe ,transform_syringe) in query_syringe.iter(){
+            let syringe_scale = Vec2::from(transform_syringe.scale.xy());
 
-    for (syringe, damage ,transform_syringe) in query_syringe.iter(){
-        let syringe_scale = Vec2::from(transform_syringe.scale.xy());
+            for (enemy, mut health, transform_enemy) in query_enemy.iter_mut()  {
+                let enemy_scale = Vec2::from(transform_enemy.scale.xy());
 
-        for (enemy, mut health, transform_enemy) in query_enemy.iter_mut()  {
-            let enemy_scale = Vec2::from(transform_enemy.scale.xy());
-
-            let collide = collide(
-                transform_syringe.translation,
-                SPRITE_SYRINGE_SIZE * syringe_scale,
-                transform_enemy.translation,
-                SPRITE_ENEMY_SIZE * enemy_scale,
-            );
-
-
-            if let Some(_) = collide{
-                health.value = health.value - damage.value;
-                commands.entity(syringe).despawn();
-
-                if health.value == 0{
-                    deadcount.0 += 10;
-                    commands.entity(enemy).despawn();
-
-                    dead_change_room.0 += 1;
+                let collide = collide(
+                    transform_syringe.translation,
+                    SPRITE_SYRINGE_SIZE * syringe_scale,
+                    transform_enemy.translation,
+                    SPRITE_ENEMY_SIZE * enemy_scale,
+                );
 
 
-                    if dead_change_room.0 == limit_deads.0 {
-                        app_state.set(GameState::Room2);
+                if let Some(_) = collide{
+                    health.value = health.value - damage.value;
+                    commands.entity(syringe).despawn();
+
+                    if health.value <= 0{
+                        deadcount.0 += 10;
+                        commands.entity(enemy).despawn();
+
+                        dead_change_room.0 += 1;
+
+
+                        if dead_change_room.0 == limit_deads.0 {
+                            app_state.set(GameState::Room2);
+                        }
                     }
                 }
             }
