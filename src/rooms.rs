@@ -392,7 +392,8 @@ pub fn despawn_something(mut commands: Commands,
 
 
 pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
-                       mut commands: Commands, mut query_player: Query<(Entity, &Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<SalineStand>)>,
+                       mut commands: Commands,
+                       mut query_player: Query<(Entity, &Transform, &mut Health), (With<Player>, Without<Wall>, Without<Bed>, Without<SalineStand>)>,
                        query_wall: Query<&Transform, (With<Wall>, Without<Player>, Without<Bed>, Without<SalineStand>)>,
                        query_bed: Query<&Transform, (With<Bed>, Without<Player>, Without<Wall>, Without<SalineStand>)>,
                        query_saline_stand: Query<&Transform, (With<SalineStand>, Without<Player>, Without<Bed>, Without<Wall>)>,

@@ -30,8 +30,9 @@ pub const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(8.0, 8.0);
 pub const SPRITE_WALL_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 pub const SPRITE_BED_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 pub const SPRITE_SOMETHING_SIZE: Vec2 = Vec2::new(20.0, 20.0);
-
-
+pub const SPRITE_SPEED_UP_SIZE: Vec2 = Vec2::new(16.0, 16.0);
+pub const SPRITE_DOUBLE_SHOT_SIZE: Vec2 = Vec2::new(16.0, 16.0);
+pub const SPRITE_DAMAGE_UP_SIZE: Vec2 = Vec2::new(16.0, 16.0);
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
 pub enum GameState {

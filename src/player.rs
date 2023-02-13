@@ -8,8 +8,6 @@ use bevy::reflect::struct_partial_eq;
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
 const SPEED_SYRINGE: f32 = 25.0;
-const DEFAULT_HEALTH: i32 = 200;
-const DEFAULT_SPEED: f32 = 200.0;
 
 #[derive(Component)]
 pub struct PlayerPlugin;
@@ -81,9 +79,9 @@ pub fn spawn_player(mut commands: Commands,
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
-        .insert(Health{value: DEFAULT_HEALTH})
+        .insert(Health{value: 200})
         .insert(Velosity{x: 0.0, y:0.0})
-        .insert(Speed{value: DEFAULT_SPEED})
+        .insert(Speed{value: 200.0})
         .insert(DoubleShot{value: false});
 }
 
@@ -195,7 +193,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Damage{value: 1})
                     .insert(Velosity{x: 1.0 , y: 0.5});
             }
             commands.spawn(SpriteBundle {
@@ -207,7 +204,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                 },
                 ..default()
             }).insert(Syringe)
-                .insert(Damage{value: 1})
                 .insert(Velosity{x: 1.0 , y: 0.0});
 
         }
@@ -228,7 +224,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Damage{value: 1})
                     .insert(Velosity{x: -1.0 , y: 0.5});
             }
             commands.spawn(SpriteBundle {
@@ -240,7 +235,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                 },
                 ..default()
             }).insert(Syringe)
-                .insert(Damage{value: 1})
                 .insert(Velosity{x: -1.0 , y: 0.0});
         }
 
@@ -261,7 +255,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Damage{value: 1})
                     .insert(Velosity{x: 0.5 , y: 1.0});
             }
             commands.spawn(SpriteBundle {
@@ -273,7 +266,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                 },
                 ..default()
             }).insert(Syringe)
-                .insert(Damage{value: 1})
                 .insert(Velosity{x: 0.0 , y: 1.0});
 
         }
@@ -295,7 +287,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Damage{value: 1})
                     .insert(Velosity{x: 0.5 , y: -1.0});
             }
             commands.spawn(SpriteBundle {
@@ -307,7 +298,6 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                 },
                 ..default()
             }).insert(Syringe)
-                .insert(Damage{value: 1})
                 .insert(Velosity{x: 0.0 , y: -1.0});
 
         }
@@ -333,7 +323,8 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
 
 pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
-                   mut commands: Commands, query_syringe: Query<(Entity, &Damage, &Transform), With<Syringe>>,
+                   mut commands: Commands,
+                   query_syringe: Query<(Entity, &Transform), With<Syringe>>,
                    mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
