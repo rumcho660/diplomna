@@ -14,6 +14,7 @@ use bevy_kira_audio::AudioPlugin;
 use crate::enemy::EnemyPlugin;
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
+use crate::items::ItemsPlugin;
 use crate::menu::MenusPlugin;
 use crate::player::{DeadChangeRoom, DeadCount, LimitDeads, PlayerPlugin};
 use crate::rooms::RoomsPlugin;
@@ -71,6 +72,7 @@ fn main() {
         .add_plugin(GameStoryPlugin)
         .add_plugin(MenusPlugin)
         .add_plugin(TimerPlugin)
+        .add_plugin(ItemsPlugin)
         .add_plugin(RoomsPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(EnemyPlugin)

@@ -39,7 +39,6 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },
@@ -58,7 +57,6 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },
@@ -90,7 +88,6 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },
@@ -109,7 +106,6 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },
@@ -128,7 +124,6 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },
@@ -148,7 +143,6 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
                 scale: Vec3::splat(2.5),
                 ..default()
             },
-            visibility: Visibility::VISIBLE,
             ..default()
 
         },

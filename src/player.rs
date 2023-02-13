@@ -7,9 +7,9 @@ use bevy::math::Vec3Swizzles;
 
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
-const SPEED_PLAYER: f32 = 200.0;
 const SPEED_SYRINGE: f32 = 25.0;
-
+const DEFAULT_HEALTH: i32 = 200;
+const DEFAULT_SPEED: f32 = 200.0;
 
 #[derive(Component)]
 pub struct PlayerPlugin;
@@ -26,11 +26,6 @@ pub struct Syringe;
 pub struct Velosity{
     pub(crate) x: f32, pub(crate) y: f32}
 
-#[derive(Resource)]
-pub struct Position{
-    pub x: f32,
-    pub y: f32,
-}
 
 #[derive(Resource)]
 pub struct DeadCount(pub i32);
@@ -57,6 +52,11 @@ pub struct Damage{
     pub value: i32
 }
 
+#[derive(Component)]
+pub struct Speed{
+    pub value: f32
+}
+
 
 
 pub fn spawn_player(mut commands: Commands,
@@ -76,8 +76,9 @@ pub fn spawn_player(mut commands: Commands,
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
-        .insert(Health{value: 200})
-        .insert(Velosity{x: 0.0, y:0.0});
+        .insert(Health{value: DEFAULT_HEALTH})
+        .insert(Velosity{x: 0.0, y:0.0})
+        .insert(Speed{value: DEFAULT_SPEED});
 }
 
 
@@ -88,13 +89,13 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
 }
 
 pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
-                    mut query: Query< (&mut Velosity, &mut Transform), With<Player>>,
+                    mut query: Query< (&mut Velosity, &mut Transform, &Speed), With<Player>>,
                     time: Res<Time>,
                     texture_atlases: Res<Assets<TextureAtlas>>,
                     mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
-    for (mut velocity ,mut _transform) in query.iter_mut() {
+    for (mut velocity ,mut _transform, speed) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
-            velocity.x += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.x += 1.0 * TIME_STEP_PLAYER * speed.value;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -106,7 +107,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
         }
 
         if keyboard_input.pressed(KeyCode::A) {
-            velocity.x -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.x -= 1.0 * TIME_STEP_PLAYER * speed.value;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -119,7 +120,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
         }
 
         if keyboard_input.pressed(KeyCode::W) {
-            velocity.y += 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.y += 1.0 * TIME_STEP_PLAYER * speed.value;
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
                 timer.tick(time.delta());
@@ -132,7 +133,7 @@ pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
         }
 
         if keyboard_input.pressed(KeyCode::S) {
-            velocity.y -= 1.0 * TIME_STEP_PLAYER * SPEED_PLAYER;
+            velocity.y -= 1.0 * TIME_STEP_PLAYER * speed.value;
 
 
             for (mut timer, mut sprite, texture_atlas_handle) in &mut query_animation {
