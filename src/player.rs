@@ -1,3 +1,4 @@
+use std::time::Duration;
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
@@ -34,6 +35,9 @@ pub struct LimitDeads(pub i32);
 
 #[derive(Resource)]
 pub struct DeadChangeRoom(pub i32);
+
+#[derive(Resource)]
+pub struct AttackPlayerTimer(pub Timer);
 
 
 #[derive(Component, Deref, DerefMut)]
@@ -170,6 +174,8 @@ pub fn leave_main_room(mut app_state: ResMut<State<GameState>>,
 
 
 pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
+                                 mut attack_time: ResMut<AttackPlayerTimer>,
+                                 time: Res<Time>,
                                  query_player: Query<(&Transform, &DoubleShot), (With<Player>, Without<Syringe>)>,
                                  mut query_enemy: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>,
                                  asset_server: Res<AssetServer>,
@@ -180,11 +186,24 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
     let syringe_down  = asset_server.load("Syringe_down.png");
 
     for (player_pos, double_shot) in query_player.iter(){
-        if keyboard_input.just_pressed(KeyCode::Right) {
-            let x = player_pos.translation.x;
-            let y = player_pos.translation.y;
 
-            if double_shot.value == true{
+        if keyboard_input.pressed(KeyCode::Right) {
+            if attack_time.0.tick(time.delta()).just_finished(){
+                let x = player_pos.translation.x;
+                let y = player_pos.translation.y;
+
+                if double_shot.value == true{
+                    commands.spawn(SpriteBundle {
+                        texture: syringe_right.clone(),
+                        transform: Transform{
+                            translation: Vec3::new(x, y, 1.0),
+                            scale: Vec3::splat(4.0),
+                            ..default()
+                        },
+                        ..default()
+                    }).insert(Syringe)
+                        .insert(Velosity{x: 1.0 , y: 0.5});
+                }
                 commands.spawn(SpriteBundle {
                     texture: syringe_right.clone(),
                     transform: Transform{
@@ -194,28 +213,30 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Velosity{x: 1.0 , y: 0.5});
+                    .insert(Velosity{x: 1.0 , y: 0.0});
+                attack_time.0.reset();
             }
-            commands.spawn(SpriteBundle {
-                texture: syringe_right.clone(),
-                transform: Transform{
-                    translation: Vec3::new(x, y, 1.0),
-                    scale: Vec3::splat(4.0),
-                    ..default()
-                },
-                ..default()
-            }).insert(Syringe)
-                .insert(Velosity{x: 1.0 , y: 0.0});
-
         }
 
 
 
-        if keyboard_input.just_pressed(KeyCode::Left) {
-            let x = player_pos.translation.x;
-            let y = player_pos.translation.y;
+        if keyboard_input.pressed(KeyCode::Left) {
+            if attack_time.0.tick(time.delta()).just_finished(){
+                let x = player_pos.translation.x;
+                let y = player_pos.translation.y;
 
-            if double_shot.value == true{
+                if double_shot.value == true{
+                    commands.spawn(SpriteBundle {
+                        texture: syringe_left.clone(),
+                        transform: Transform{
+                            translation: Vec3::new(x, y, 1.0),
+                            scale: Vec3::splat(4.0),
+                            ..default()
+                        },
+                        ..default()
+                    }).insert(Syringe)
+                        .insert(Velosity{x: -1.0 , y: 0.5});
+                }
                 commands.spawn(SpriteBundle {
                     texture: syringe_left.clone(),
                     transform: Transform{
@@ -225,28 +246,31 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Velosity{x: -1.0 , y: 0.5});
+                    .insert(Velosity{x: -1.0 , y: 0.0});
+                attack_time.0.reset();
             }
-            commands.spawn(SpriteBundle {
-                texture: syringe_left.clone(),
-                transform: Transform{
-                    translation: Vec3::new(x, y, 1.0),
-                    scale: Vec3::splat(4.0),
-                    ..default()
-                },
-                ..default()
-            }).insert(Syringe)
-                .insert(Velosity{x: -1.0 , y: 0.0});
         }
 
 
 
-        if keyboard_input.just_pressed(KeyCode::Up) {
-            let x = player_pos.translation.x;
-            let y = player_pos.translation.y;
+        if keyboard_input.pressed(KeyCode::Up) {
+            if attack_time.0.tick(time.delta()).just_finished(){
+                let x = player_pos.translation.x;
+                let y = player_pos.translation.y;
 
 
-            if double_shot.value == true{
+                if double_shot.value == true{
+                    commands.spawn(SpriteBundle {
+                        texture: syringe_up.clone(),
+                        transform: Transform{
+                            translation: Vec3::new(x, y, 1.0),
+                            scale: Vec3::splat(4.0),
+                            ..default()
+                        },
+                        ..default()
+                    }).insert(Syringe)
+                        .insert(Velosity{x: 0.5 , y: 1.0});
+                }
                 commands.spawn(SpriteBundle {
                     texture: syringe_up.clone(),
                     transform: Transform{
@@ -256,29 +280,31 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Velosity{x: 0.5 , y: 1.0});
+                    .insert(Velosity{x: 0.0 , y: 1.0});
+                attack_time.0.reset();
             }
-            commands.spawn(SpriteBundle {
-                texture: syringe_up.clone(),
-                transform: Transform{
-                    translation: Vec3::new(x, y, 1.0),
-                    scale: Vec3::splat(4.0),
-                    ..default()
-                },
-                ..default()
-            }).insert(Syringe)
-                .insert(Velosity{x: 0.0 , y: 1.0});
-
         }
 
 
 
-        if keyboard_input.just_pressed(KeyCode::Down) {
-            let x = player_pos.translation.x;
-            let y = player_pos.translation.y;
+        if keyboard_input.pressed(KeyCode::Down) {
+            if attack_time.0.tick(time.delta()).just_finished(){
+                let x = player_pos.translation.x;
+                let y = player_pos.translation.y;
 
 
-            if double_shot.value == true{
+                if double_shot.value == true{
+                    commands.spawn(SpriteBundle {
+                        texture: syringe_down.clone(),
+                        transform: Transform{
+                            translation: Vec3::new(x, y, 1.0),
+                            scale: Vec3::splat(4.0),
+                            ..default()
+                        },
+                        ..default()
+                    }).insert(Syringe)
+                        .insert(Velosity{x: 0.5 , y: -1.0});
+                }
                 commands.spawn(SpriteBundle {
                     texture: syringe_down.clone(),
                     transform: Transform{
@@ -288,19 +314,9 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                     },
                     ..default()
                 }).insert(Syringe)
-                    .insert(Velosity{x: 0.5 , y: -1.0});
+                    .insert(Velosity{x: 0.0 , y: -1.0});
+                attack_time.0.reset();
             }
-            commands.spawn(SpriteBundle {
-                texture: syringe_down.clone(),
-                transform: Transform{
-                    translation: Vec3::new(x, y, 1.0),
-                    scale: Vec3::splat(4.0),
-                    ..default()
-                },
-                ..default()
-            }).insert(Syringe)
-                .insert(Velosity{x: 0.0 , y: -1.0});
-
         }
         for (entity ,velocity, mut transform) in query_enemy.iter_mut(){
 
@@ -324,12 +340,15 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
 
 pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
-                   mut commands: Commands, query_syringe: Query<(Entity, &Transform), With<Syringe>>,
+                   mut commands: Commands,
+                   query_syringe: Query<(Entity, &Transform), With<Syringe>>,
                    mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
                    mut query_player: Query<&Damage, With<Player>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
                    limit_deads: ResMut<LimitDeads>){
+
+
     for damage in query_player.iter_mut(){
         for (syringe ,transform_syringe) in query_syringe.iter(){
             let syringe_scale = Vec2::from(transform_syringe.scale.xy());
@@ -356,7 +375,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
                         dead_change_room.0 += 1;
 
 
-                        if dead_change_room.0 == limit_deads.0 {
+                        if dead_change_room.0 == limit_deads.0{
                             app_state.set(GameState::Room2);
                         }
                     }

@@ -29,7 +29,7 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
     };
 
 
-    timer_end.0.tick(Duration::from_secs_f32(0.02));
+    timer_end.0.tick(Duration::from_secs_f32(0.02)).just_finished();
 
 
 

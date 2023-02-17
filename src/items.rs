@@ -59,10 +59,9 @@ pub fn spawn_items(mut commands: Commands, asset_server: Res<AssetServer>){
 }
 pub fn pick_items(mut commands: Commands,
                   mut query_player: Query<(&Transform, &mut Speed, &mut DoubleShot, &mut Damage), With<Player>>,
-                  query_speed: Query<(Entity, &Transform), (With<SpeedUp>, Without<Player>, Without<MoreSyringes>, Without<DamageUp>)>,
-                  query_double_shot: Query<(Entity, &Transform),(With<MoreSyringes>, Without<Player>, Without<SpeedUp>, Without<DamageUp>)>,
-                  query_damage_up: Query<(Entity, &Transform),(With<DamageUp>, Without<Player>, Without<SpeedUp>, Without<MoreSyringes>)>){
-    let mut flag = 0;
+                  query_speed: Query<(Entity, &Transform), With<SpeedUp>>,
+                  query_double_shot: Query<(Entity, &Transform), With<MoreSyringes>>,
+                  query_damage_up: Query<(Entity, &Transform), With<DamageUp>>){
     for (transform_player, mut speed, mut double_shot, mut damage) in query_player.iter_mut() {
         let player_scale = Vec2::from(transform_player.scale.xy());
 
@@ -79,7 +78,6 @@ pub fn pick_items(mut commands: Commands,
             if let Some(_) = collide_speed_item {
                 speed.value = 400.0;
                 commands.entity(item_speed).despawn();
-                flag += 1;
             }
         }
 
@@ -96,7 +94,6 @@ pub fn pick_items(mut commands: Commands,
             if let Some(_) = collide_double_shot_item {
                 double_shot.value = true;
                 commands.entity(item_double_shot).despawn();
-                flag += 1;
             }
         }
 
@@ -111,9 +108,7 @@ pub fn pick_items(mut commands: Commands,
             );
 
             if let Some(_) = collide_damage_up_item {
-                damage.value = 10;
                 commands.entity(item_damage_up).despawn();
-                flag += 1;
             }
         }
 
@@ -121,11 +116,38 @@ pub fn pick_items(mut commands: Commands,
     }
 }
 
+
+pub fn despawn_damage_up(mut commands: Commands,
+                        query: Query<Entity, With<DamageUp>>){
+    for damage_up in query.iter(){
+        commands.entity(damage_up).despawn_recursive();
+    }
+}
+
+pub fn despawn_speed_up(mut commands: Commands,
+                        query: Query<Entity, With<SpeedUp>>){
+    for speed_up in query.iter(){
+        commands.entity(speed_up).despawn_recursive();
+    }
+}
+
+pub fn despawn_double_shot(mut commands: Commands,
+                        query: Query<Entity, With<MoreSyringes>>){
+    for double_shot in query.iter(){
+        commands.entity(double_shot).despawn_recursive();
+    }
+}
+
+
 impl Plugin for ItemsPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(SystemSet::on_enter(GameState::MainRoom)
             .with_system(spawn_items))
         .add_system_set(SystemSet::on_update(GameState::MainRoom)
-            .with_system(pick_items));
+            .with_system(pick_items))
+        .add_system_set(SystemSet::on_exit(GameState::MainRoom)
+            .with_system(despawn_damage_up)
+            .with_system(despawn_speed_up)
+            .with_system(despawn_double_shot));
     }
 }

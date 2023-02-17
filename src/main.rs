@@ -16,7 +16,7 @@ use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
 use crate::items::ItemsPlugin;
 use crate::menu::MenusPlugin;
-use crate::player::{DeadChangeRoom, DeadCount, LimitDeads, PlayerPlugin};
+use crate::player::{AttackPlayerTimer, DeadChangeRoom, DeadCount, LimitDeads, PlayerPlugin};
 use crate::rooms::RoomsPlugin;
 use crate::sound::audio_game;
 use crate::timer::{TimerEndGame, TimerPlugin};
@@ -53,6 +53,7 @@ fn setup_camera(mut commands: Commands) {
 fn main() {
     App::new()
         .insert_resource(TimerEndGame(Timer::from_seconds(21.0, TimerMode::Once)))
+        .insert_resource(AttackPlayerTimer(Timer::from_seconds(0.4, TimerMode::Repeating)))
         .insert_resource(DeadCount(0))
         .insert_resource(DeadChangeRoom(0))
         .insert_resource(LimitDeads(0))
@@ -81,5 +82,4 @@ fn main() {
         .add_startup_system(audio_game)
         .add_system(close_on_esc)
         .run();
-
 }

@@ -6,9 +6,6 @@ use crate::player::{DeadCount};
 pub struct GameScore;
 
 #[derive(Component)]
-pub struct BackMenu;
-
-#[derive(Component)]
 pub struct CounterPLugin;
 
 

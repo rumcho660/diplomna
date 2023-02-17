@@ -4,26 +4,13 @@ use crate::GameState;
 
 
 #[derive(Component)]
-pub struct GameStory;
-
-#[derive(Component)]
 pub struct MainMenu;
-
-#[derive(Component)]
-pub struct MainGame;
-
-#[derive(Component)]
-pub struct GameOver;
 
 #[derive(Component)]
 pub struct StartButton;
 
-
 #[derive(Component)]
 pub struct QuitButton;
-
-
-
 
 #[derive(Component)]
 pub struct MenusPlugin;
