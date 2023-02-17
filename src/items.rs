@@ -2,7 +2,7 @@ use bevy:: prelude::*;
 use bevy::math::Vec3Swizzles;
 use bevy::sprite::collide_aabb::collide;
 use crate::{GameState, SPRITE_DAMAGE_UP_SIZE, SPRITE_DOUBLE_SHOT_SIZE, SPRITE_PLAYER_SIZE, SPRITE_SPEED_UP_SIZE};
-use crate::player::{Damage, DoubleShot, Player, Speed, Syringe};
+use crate::player::{Damage, DoubleShot, Player, Speed};
 
 #[derive(Component)]
 pub struct DamageUp;
@@ -108,6 +108,7 @@ pub fn pick_items(mut commands: Commands,
             );
 
             if let Some(_) = collide_damage_up_item {
+                damage.value = 4;
                 commands.entity(item_damage_up).despawn();
             }
         }

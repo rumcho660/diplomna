@@ -1,6 +1,5 @@
 use std::time::Duration;
 use bevy:: prelude::*;
-use bevy::app::AppExit;
 use crate::{GameState, TypeDeath};
 
 #[derive(Resource)]
@@ -14,12 +13,11 @@ pub struct TimerPlugin;
 
 pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
                           mut timer_end: ResMut<TimerEndGame>,
-                          mut _exit: EventWriter<AppExit>,
                           mut commands: Commands,
                           asset_server: Res<AssetServer>,
                           mut app_state: ResMut<State<GameState>>){
     let x_pos = -378.0;
-    let y_pos = 250.0;
+    let y_pos = 270.0;
     let font1 = asset_server.load("ARCADECLASSIC.TTF");
 
     let text_style = TextStyle {
@@ -30,8 +28,6 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
 
 
     timer_end.0.tick(Duration::from_secs_f32(0.02)).just_finished();
-
-
 
     if timer_end.0.elapsed_secs() == 1.0{
         commands.spawn(Text2dBundle {
@@ -280,9 +276,6 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
         }).insert(TimerItem);
         app_state.set(GameState::GameOver).expect("timer state set error");
     }
-
-
-
 }
 
 pub fn destroy_timer_el(mut commands: Commands,

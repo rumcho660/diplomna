@@ -1,10 +1,8 @@
-use std::time::Duration;
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
-use bevy::reflect::struct_partial_eq;
 
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
@@ -23,7 +21,7 @@ pub struct Syringe;
 
 #[derive(Component)]
 pub struct Velosity{
-    pub(crate) x: f32, pub(crate) y: f32}
+    pub x: f32, pub y: f32}
 
 
 #[derive(Resource)]
@@ -83,7 +81,7 @@ pub fn spawn_player(mut commands: Commands,
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
-        .insert(Health{value: 200})
+        .insert(Health{value: 20})
         .insert(Damage{value: 2})
         .insert(Velosity{x: 0.0, y:0.0})
         .insert(Speed{value: 200.0})
@@ -376,7 +374,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
 
                         if dead_change_room.0 == limit_deads.0{
-                            app_state.set(GameState::Room2);
+                            app_state.set(GameState::Room2).expect("something went wrong");
                         }
                     }
                 }

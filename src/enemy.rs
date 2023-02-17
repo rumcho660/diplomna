@@ -7,13 +7,14 @@ use crate::player::Damage;
 
 const SPEED_ENEMY: f32 = 200.0;
 
+#[derive(Resource)]
+pub struct AttackEnemyTimer(pub Timer);
+
 #[derive(Component)]
 pub struct Enemy;
 
-
 #[derive(Component)]
 pub struct EnemyPlugin;
-
 
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimerEnemy(pub Timer);
@@ -211,6 +212,8 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
 
 
 pub fn enemy_attack(mut commands: Commands,
+                    mut attack_time: ResMut<AttackEnemyTimer>,
+                    time: Res<Time>,
                     mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>,
                     query_enemy: Query<(&Damage, &Transform), With<Enemy>>,
                     mut app_state: ResMut<State<GameState>>,
@@ -231,10 +234,12 @@ pub fn enemy_attack(mut commands: Commands,
 
 
             if let Some(_) = collide{
-                health.value -= damage.value;
+                if attack_time.0.tick(time.delta()).just_finished(){
+                    health.value -= damage.value;
+                    println!("attacked");
+                }
 
-
-                if health.value == 0{
+                if health.value <= 0{
                     type_dead.0 = 1;
 
                     commands.entity(player).despawn();

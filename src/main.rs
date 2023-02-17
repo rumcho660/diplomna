@@ -11,7 +11,7 @@ mod items;
 use bevy:: prelude::*;
 use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
-use crate::enemy::EnemyPlugin;
+use crate::enemy::{AttackEnemyTimer, EnemyPlugin};
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
 use crate::items::ItemsPlugin;
@@ -54,6 +54,7 @@ fn main() {
     App::new()
         .insert_resource(TimerEndGame(Timer::from_seconds(21.0, TimerMode::Once)))
         .insert_resource(AttackPlayerTimer(Timer::from_seconds(0.4, TimerMode::Repeating)))
+        .insert_resource(AttackEnemyTimer(Timer::from_seconds(0.3, TimerMode::Repeating)))
         .insert_resource(DeadCount(0))
         .insert_resource(DeadChangeRoom(0))
         .insert_resource(LimitDeads(0))
