@@ -1,11 +1,9 @@
 use bevy:: prelude::*;
 use bevy::sprite::collide_aabb::{collide};
-use crate::player::{Health, Player, Velosity};
+use crate::player::{Health, Player, Speed, Velosity};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE, TypeDeath};
 use bevy::math::Vec3Swizzles;
 use crate::player::Damage;
-
-const SPEED_ENEMY: f32 = 200.0;
 
 #[derive(Resource)]
 pub struct AttackEnemyTimer(pub Timer);
@@ -47,6 +45,7 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 5})
         .insert(Damage{value: 2})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -65,6 +64,7 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 5})
         .insert(Damage{value: 2})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 }
 
@@ -96,6 +96,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -114,6 +115,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -132,6 +134,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -151,6 +154,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
+        .insert(Speed{value: 200.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 }
 
@@ -164,13 +168,13 @@ pub fn despawn_enemy(mut commands: Commands,
 
 
 
-pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>, Without<Player>)>,
+pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform, &Speed), (With<Enemy>, Without<Player>)>,
                   player_query: Query<&Transform, (With<Player>, Without<Enemy>)>,
                   time: Res<Time>,
                   texture_atlases: Res<Assets<TextureAtlas>>,
                   mut query_animation: Query<(&mut AnimationTimerEnemy, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
 
-    for (mut velocity, mut enemy_pos) in query.iter_mut() {
+    for (mut velocity, mut enemy_pos, speed) in query.iter_mut() {
         for player_pos in player_query.iter() {
 
             if enemy_pos.translation.x > player_pos.translation.x {
@@ -201,8 +205,8 @@ pub fn move_enemy(mut query: Query<(&mut Velosity, &mut Transform), (With<Enemy>
             let mut translation = &mut enemy_pos.translation;
 
 
-            translation.x += velocity.x * SPEED_ENEMY;
-            translation.y += velocity.y * SPEED_ENEMY;
+            translation.x += velocity.x * speed.value;
+            translation.y += velocity.y * speed.value;
 
         }
 
@@ -241,9 +245,8 @@ pub fn enemy_attack(mut commands: Commands,
 
                 if health.value <= 0{
                     type_dead.0 = 1;
-
                     commands.entity(player).despawn();
-                    app_state.set(GameState::GameOver).expect("error in gameover in player.rs");
+                    app_state.set(GameState::GameOver);
                 }
             }
         }

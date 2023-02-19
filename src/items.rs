@@ -16,7 +16,8 @@ pub struct MoreSyringes;
 #[derive(Component)]
 pub struct ItemsPlugin;
 
-pub fn spawn_items(mut commands: Commands, asset_server: Res<AssetServer>){
+pub fn spawn_items(mut commands: Commands,
+                   asset_server: Res<AssetServer>){
     let damage_up =  asset_server.load("Damage_up.png");
     let speed_up =  asset_server.load("Speed_Up.png");
     let more_syringes =  asset_server.load("More_syringes.png");

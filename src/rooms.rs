@@ -419,7 +419,7 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
 
                 health.value -= 300;
                 commands.entity(entity).despawn();
-                app_state.set(GameState::GameOver).expect("something went wrong");
+                app_state.set(GameState::GameOver);
             }
         }
 
@@ -440,7 +440,7 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
 
                 health.value -= 300;
                 commands.entity(entity).despawn();
-                app_state.set(GameState::GameOver).expect("something went wrong");
+                app_state.set(GameState::GameOver);
             }
         }
 
@@ -461,7 +461,7 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
 
                 health.value -= 300;
                 commands.entity(entity).despawn();
-                app_state.set(GameState::GameOver).expect("something went wrong");
+                app_state.set(GameState::GameOver);
             }
         }
     }

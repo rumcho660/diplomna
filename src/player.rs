@@ -175,7 +175,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                                  mut attack_time: ResMut<AttackPlayerTimer>,
                                  time: Res<Time>,
                                  query_player: Query<(&Transform, &DoubleShot), (With<Player>, Without<Syringe>)>,
-                                 mut query_enemy: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>,
+                                 mut query_syringe: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>,
                                  asset_server: Res<AssetServer>,
                                  mut commands: Commands){
     let syringe_right  = asset_server.load("Syringe_right.png");
@@ -316,7 +316,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                 attack_time.0.reset();
             }
         }
-        for (entity ,velocity, mut transform) in query_enemy.iter_mut(){
+        for (entity ,velocity, mut transform) in query_syringe.iter_mut(){
 
             let mut translation = &mut transform.translation;
             translation.x += velocity.x * SPEED_SYRINGE;
@@ -383,12 +383,6 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
     }
 }
 
-pub fn despawn_syringes(mut commands: Commands,
-                        query: Query<Entity, With<Syringe>>){
-    for syringes in query.iter(){
-        commands.entity(syringes).despawn_recursive();
-    }
-}
 
 impl Plugin for PlayerPlugin  {
     fn build(&self, app: &mut App) {
@@ -408,7 +402,6 @@ impl Plugin for PlayerPlugin  {
                 .with_system(move_player)
                 .with_system(syringe_hit))
             .add_system_set(SystemSet::on_enter(GameState::GameOver)
-                .with_system(despawn_player)
-                .with_system(despawn_syringes));
+                .with_system(despawn_player));
     }
 }
