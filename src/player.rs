@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
+use bevy_kira_audio::{Audio, AudioControl};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
@@ -178,6 +179,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
                                  query_player: Query<(&Transform, &DoubleShot), (With<Player>, Without<Syringe>)>,
                                  mut query_syringe: Query<(Entity, &Velosity, &mut Transform), (With<Syringe>, Without<Player>)>,
                                  asset_server: Res<AssetServer>,
+                                 audio: Res<Audio>,
                                  mut commands: Commands){
     let syringe_right  = asset_server.load("Syringe_right.png");
     let syringe_left  = asset_server.load("Syringe_left.png");
@@ -188,6 +190,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
         if keyboard_input.pressed(KeyCode::Right) {
             if attack_time.0.tick(time.delta()).just_finished(){
+                audio.play(asset_server.load("mixkit-short-laser-gun-shot-1670.wav"));
                 let x = player_pos.translation.x;
                 let y = player_pos.translation.y;
 
@@ -221,6 +224,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
         if keyboard_input.pressed(KeyCode::Left) {
             if attack_time.0.tick(time.delta()).just_finished(){
+                audio.play(asset_server.load("mixkit-short-laser-gun-shot-1670.wav"));
                 let x = player_pos.translation.x;
                 let y = player_pos.translation.y;
 
@@ -254,6 +258,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
         if keyboard_input.pressed(KeyCode::Up) {
             if attack_time.0.tick(time.delta()).just_finished(){
+                audio.play(asset_server.load("mixkit-short-laser-gun-shot-1670.wav"));
                 let x = player_pos.translation.x;
                 let y = player_pos.translation.y;
 
@@ -288,6 +293,7 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 
         if keyboard_input.pressed(KeyCode::Down) {
             if attack_time.0.tick(time.delta()).just_finished(){
+                audio.play(asset_server.load("mixkit-short-laser-gun-shot-1670.wav"));
                 let x = player_pos.translation.x;
                 let y = player_pos.translation.y;
 
@@ -346,7 +352,9 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
                    limit_deads: ResMut<LimitDeads>,
-                   mut type_dead: ResMut<TypeDeath>){
+                   mut type_dead: ResMut<TypeDeath>,
+                   audio: Res<Audio>,
+                   asset_server: Res<AssetServer>){
 
 
     for damage in query_player.iter_mut(){
@@ -365,6 +373,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
 
                 if let Some(_) = collide{
+                    audio.play(asset_server.load("mixkit-boxer-getting-hit-2055.wav"));
                     if transform_enemy.translation.x >0.0{
                         transform_enemy.translation.x -= 30.0;
                     }

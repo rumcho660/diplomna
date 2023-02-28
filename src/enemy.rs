@@ -3,6 +3,7 @@ use bevy::sprite::collide_aabb::{collide};
 use crate::player::{Health, Player, Speed, Velosity};
 use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_PLAYER_SIZE, TypeDeath};
 use bevy::math::Vec3Swizzles;
+use bevy_kira_audio::{Audio, AudioControl};
 use crate::player::Damage;
 
 #[derive(Resource)]
@@ -216,7 +217,9 @@ pub fn enemy_attack(mut commands: Commands,
                     mut query_player: Query<(Entity, &mut Health, &Transform), With<Player>>,
                     query_enemy: Query<(&Damage, &Transform), With<Enemy>>,
                     mut app_state: ResMut<State<GameState>>,
-                    mut type_dead: ResMut<TypeDeath>){
+                    mut type_dead: ResMut<TypeDeath>,
+                    audio: Res<Audio>,
+                    asset_server: Res<AssetServer>){
 
     for (player, mut health,  transform_player) in query_player.iter_mut(){
         let player_scale = Vec2::from(transform_player.scale.xy());
@@ -234,8 +237,8 @@ pub fn enemy_attack(mut commands: Commands,
 
             if let Some(_) = collide{
                 if attack_time.0.tick(time.delta()).just_finished(){
+                    audio.play(asset_server.load("mixkit-boxer-punch-exhaling-2054.wav"));
                     health.value -= damage.value;
-                    println!("attacked");
                 }
 
                 if health.value <= 0{
