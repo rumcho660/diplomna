@@ -11,6 +11,7 @@ mod items;
 use bevy:: prelude::*;
 use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
+use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use crate::enemy::{AttackEnemyTimer, EnemyPlugin};
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
@@ -30,9 +31,9 @@ pub const SPRITE_SYRINGE_SIZE: Vec2 = Vec2::new(8.0, 8.0);
 pub const SPRITE_WALL_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 pub const SPRITE_BED_SIZE: Vec2 = Vec2::new(20.0, 20.0);
 pub const SPRITE_SOMETHING_SIZE: Vec2 = Vec2::new(20.0, 20.0);
-pub const SPRITE_SPEED_UP_SIZE: Vec2 = Vec2::new(16.0, 16.0);
-pub const SPRITE_DOUBLE_SHOT_SIZE: Vec2 = Vec2::new(16.0, 16.0);
-pub const SPRITE_DAMAGE_UP_SIZE: Vec2 = Vec2::new(16.0, 16.0);
+pub const SPRITE_SPEED_UP_SIZE: Vec2 = Vec2::new(10.0, 16.0);
+pub const SPRITE_DOUBLE_SHOT_SIZE: Vec2 = Vec2::new(10.0, 16.0);
+pub const SPRITE_DAMAGE_UP_SIZE: Vec2 = Vec2::new(10.0, 16.0);
 
 #[derive(Debug, Hash, Clone, Eq, PartialEq)]
 pub enum GameState {
@@ -72,6 +73,7 @@ fn main() {
         .add_state(GameState::GameStory)
         .add_startup_system(setup_camera)
         .add_plugin(AudioPlugin)
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(GameStoryPlugin)
         .add_plugin(MenusPlugin)
         .add_plugin(TimerPlugin)

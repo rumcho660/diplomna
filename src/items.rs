@@ -26,7 +26,7 @@ pub fn spawn_items(mut commands: Commands,
         texture: damage_up.clone(),
         transform: Transform{
             translation: Vec3::new(-80.0, -100.0, 1.0),
-            scale: Vec3::splat(3.0),
+            scale: Vec3::splat(2.5),
             ..default()
         },
         ..default()
@@ -38,7 +38,7 @@ pub fn spawn_items(mut commands: Commands,
         texture: speed_up.clone(),
         transform: Transform{
             translation: Vec3::new(80.0, -100.0, 1.0),
-            scale: Vec3::splat(3.0),
+            scale: Vec3::splat(2.5),
             ..default()
         },
         ..default()
@@ -50,7 +50,7 @@ pub fn spawn_items(mut commands: Commands,
         texture: more_syringes.clone(),
         transform: Transform{
             translation: Vec3::new(0.0, -100.0, 1.0),
-            scale: Vec3::splat(3.0),
+            scale: Vec3::splat(2.5),
             ..default()
         },
         ..default()

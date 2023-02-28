@@ -180,7 +180,7 @@ pub fn room1_furniture(commands: &mut Commands,
                 texture: bed.clone(),
                 transform: Transform{
                     translation: Vec3::new(WINDOW_WIDTH/2.0 - 200.0, right_side, 1.0),
-                    scale: Vec3::splat(2.5),
+                    scale: Vec3::splat(2.0),
                     ..default()
                 },
                 ..default()
@@ -194,7 +194,7 @@ pub fn room1_furniture(commands: &mut Commands,
                 texture: bed.clone(),
                 transform: Transform{
                     translation: Vec3::new(-WINDOW_WIDTH/2.0 + 200.0, left_side, 1.0),
-                    scale: Vec3::splat(2.5),
+                    scale: Vec3::splat(2.0),
                     ..default()
                 },
                 ..default()
@@ -216,8 +216,8 @@ pub fn room2_furniture(commands: &mut Commands,
         SpriteBundle {
             texture: saline_stand.clone(),
             transform: Transform {
-                translation: Vec3::new(170.0, 80.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(170.0, 90.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()
@@ -229,8 +229,8 @@ pub fn room2_furniture(commands: &mut Commands,
         SpriteBundle {
             texture: saline_stand.clone(),
             transform: Transform{
-                translation: Vec3::new(-170.0, 80.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(-170.0, 90.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()
@@ -241,8 +241,21 @@ pub fn room2_furniture(commands: &mut Commands,
         SpriteBundle {
             texture: saline_stand.clone(),
             transform: Transform {
-                translation: Vec3::new(-10.0, 190.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(-20.0, 220.0, 1.0),
+                scale: Vec3::splat(2.0),
+                ..default()
+            },
+            ..default()
+        }
+    ).insert(SalineStand);
+
+
+    commands.spawn(
+        SpriteBundle {
+            texture: saline_stand.clone(),
+            transform: Transform{
+                translation: Vec3::new(-20.0, -90.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()
@@ -261,7 +274,7 @@ pub fn choose_room(mut commands: &mut Commands,
     if odds>=0.0 && odds<=50.0{
         room1_furniture(&mut commands, &asset_server);
         spawn_enemy_wave1(&mut commands, &asset_server, &mut texture_atlases);
-        limit_deads.0 = 2;
+        limit_deads.0 = 4;
         room = "Room1.png";
     }
 
@@ -270,7 +283,7 @@ pub fn choose_room(mut commands: &mut Commands,
     else if odds>=50.0 && odds<=100.0{
         room2_furniture(&mut commands, &asset_server);
         spawn_enemy_wave2(&mut commands, &asset_server, &mut texture_atlases);
-        limit_deads.0 = 4;
+        limit_deads.0 = 3;
         room = "Room2.png";
     }
     return room;
@@ -436,11 +449,13 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
 
 
             if let Some(_) = collide_bed{
-                type_dead.0 = 3;
 
-                health.value -= 300;
-                commands.entity(entity).despawn();
-                app_state.set(GameState::GameOver);
+                health.value -= 1;
+                if health.value <= 0{
+                    type_dead.0 = 3;
+                    commands.entity(entity).despawn();
+                    app_state.set(GameState::GameOver);
+                }
             }
         }
 
@@ -457,11 +472,13 @@ pub fn hitting_objects(mut app_state: ResMut<State<GameState>>,
 
 
             if let Some(_) = collide_saline_stand{
-                type_dead.0 = 4;
 
-                health.value -= 300;
-                commands.entity(entity).despawn();
-                app_state.set(GameState::GameOver);
+                health.value -= 1;
+                if health.value <= 0{
+                    type_dead.0 = 4;
+                    commands.entity(entity).despawn();
+                    app_state.set(GameState::GameOver);
+                }
             }
         }
     }

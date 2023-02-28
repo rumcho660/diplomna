@@ -19,12 +19,12 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
     let x_pos = -378.0;
     let y_pos = 270.0;
     let font1 = asset_server.load("ARCADECLASSIC.TTF");
-
     let text_style = TextStyle {
         font: font1,
         font_size: 20.0,
         color: Color::RED,
     };
+
 
 
     timer_end.0.tick(Duration::from_secs_f32(0.02)).just_finished();
@@ -265,7 +265,9 @@ pub fn timer_til_game_end(mut type_dead: ResMut<TypeDeath>,
     }
 
     else if timer_end.0.elapsed_secs() == 21.0{
+
         type_dead.0 = 5;
+
         commands.spawn(Text2dBundle {
             text: Text::from_section("*************************************************************************************************************", text_style.clone()),
             transform: Transform{

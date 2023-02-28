@@ -13,7 +13,7 @@ pub fn game_score(mut commands: Commands,
                   asset_server: Res<AssetServer>,
                   deadcount: Res<DeadCount>,
                   type_dead: ResMut<TypeDeath>){
-    let type_of_dead;
+    let mut type_of_dead= "";
 
     if type_dead.0 == 1 {
         type_of_dead = "Death by enemy";
@@ -31,9 +31,6 @@ pub fn game_score(mut commands: Commands,
     }
     else if type_dead.0 == 5 {
         type_of_dead = "Death by timer";
-    }
-    else {
-        type_of_dead = "Congrats you beat the demo of Dr. Covid"
     }
 
     let font_score = asset_server.load("FFFFORWA.TTF");

@@ -27,45 +27,60 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
+    let mut speed = 60.0;
+    let mut y1 = 100.0;
+    let mut y2 = -100.0;
+    let x1 = 200.0;
+    let x2 = -200.0;
+    let mut m = 0;
+    let mut n = 0;
 
-
-
-    commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            transform: Transform{
-                translation: Vec3::new(300.0, 100.0, 1.0),
-                scale: Vec3::splat(2.5),
+    while m < 2{
+        commands.spawn((
+            SpriteSheetBundle {
+                texture_atlas: texture_atlas_handle.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x1, y1, 1.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
+
             },
-            ..default()
+            AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+        )).insert(Enemy)
+            .insert(Health{value: 5})
+            .insert(Damage{value: 2})
+            .insert(Speed{value: speed})
+            .insert(Velosity{x: 0.0, y: 0.0});
 
-        },
-        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Enemy)
-        .insert(Health{value: 5})
-        .insert(Damage{value: 2})
-        .insert(Speed{value: 200.0})
-        .insert(Velosity{x: 0.0, y: 0.0});
+        m += 1;
+        y1 += 100.0;
+        speed += 50.0;
+    }
 
-
-    commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            transform: Transform{
-                translation: Vec3::new(-300.0, 100.0, 1.0),
-                scale: Vec3::splat(2.5),
+    while n < 2 {
+        commands.spawn((
+            SpriteSheetBundle {
+                texture_atlas: texture_atlas_handle.clone(),
+                transform: Transform{
+                    translation: Vec3::new(x2, y2, 1.0),
+                    scale: Vec3::splat(2.0),
+                    ..default()
+                },
                 ..default()
-            },
-            ..default()
 
-        },
-        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Enemy)
-        .insert(Health{value: 5})
-        .insert(Damage{value: 2})
-        .insert(Speed{value: 200.0})
-        .insert(Velosity{x: 0.0, y: 0.0});
+            },
+            AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
+        )).insert(Enemy)
+            .insert(Health{value: 5})
+            .insert(Damage{value: 2})
+            .insert(Speed{value: speed})
+            .insert(Velosity{x: 0.0, y: 0.0});
+        n += 1;
+        y2 += -100.0;
+        speed += 50.0;
+    }
 }
 
 
@@ -85,8 +100,8 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(0.0, 400.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(0.0, -260.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()
@@ -96,7 +111,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
-        .insert(Speed{value: 200.0})
+        .insert(Speed{value: 250.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -104,8 +119,8 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(-370.0, 14.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(-230.0, 14.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()
@@ -115,7 +130,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
-        .insert(Speed{value: 200.0})
+        .insert(Speed{value: 150.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -123,28 +138,8 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             transform: Transform{
-                translation: Vec3::new(100.0, 304.0, 1.0),
-                scale: Vec3::splat(2.5),
-                ..default()
-            },
-            ..default()
-
-        },
-        AnimationTimerEnemy(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    )).insert(Enemy)
-        .insert(Health{value: 8})
-        .insert(Damage{value: 4})
-        .insert(Speed{value: 200.0})
-        .insert(Velosity{x: 0.0, y: 0.0});
-
-
-
-    commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            transform: Transform{
-                translation: Vec3::new(-230.0, 250.0, 1.0),
-                scale: Vec3::splat(2.5),
+                translation: Vec3::new(100.0, 100.0, 1.0),
+                scale: Vec3::splat(2.0),
                 ..default()
             },
             ..default()

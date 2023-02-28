@@ -1,8 +1,9 @@
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
-use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::{GameState, SPRITE_ENEMY_SIZE, SPRITE_SYRINGE_SIZE, TypeDeath, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::enemy::Enemy;
 use bevy::math::Vec3Swizzles;
+
 
 
 const TIME_STEP_PLAYER: f32 = 1.0/60.0;
@@ -76,14 +77,14 @@ pub fn spawn_player(mut commands: Commands,
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle,
-            transform: Transform::from_scale(Vec3::splat(2.5)),
+            transform: Transform::from_scale(Vec3::splat(2.0)),
             ..default()
         },
         AnimationTimerPlayer(Timer::from_seconds(0.1, TimerMode::Repeating)),
     )).insert(Player)
         .insert(Health{value: 20})
         .insert(Damage{value: 2})
-        .insert(Velosity{x: 0.0, y:0.0})
+        .insert(Velosity{ x: 0.0, y: 0.0 })
         .insert(Speed{value: 200.0})
         .insert(DoubleShot{value: false});
 }
@@ -96,10 +97,10 @@ pub fn despawn_player(mut commands: Commands, query: Query< Entity, With<Player>
 }
 
 pub fn move_player(keyboard_input: Res<Input<KeyCode>>,
-                    mut query: Query< (&mut Velosity, &mut Transform, &Speed), With<Player>>,
-                    time: Res<Time>,
-                    texture_atlases: Res<Assets<TextureAtlas>>,
-                    mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+                   mut query: Query< (&mut Velosity, &mut Transform, &Speed), With<Player>>,
+                   time: Res<Time>,
+                   texture_atlases: Res<Assets<TextureAtlas>>,
+                   mut query_animation: Query<(&mut AnimationTimerPlayer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
     for (mut velocity ,mut _transform, speed) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::D) {
             velocity.x += 1.0 * TIME_STEP_PLAYER * speed.value;
@@ -340,18 +341,19 @@ pub fn control_direction_syringe(keyboard_input: Res<Input<KeyCode>>,
 pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
                    mut commands: Commands,
                    query_syringe: Query<(Entity, &Transform), With<Syringe>>,
-                   mut query_enemy: Query<(Entity, &mut Health, &Transform), With<Enemy>>,
+                   mut query_enemy: Query<(Entity, &mut Health, &mut Transform), (With<Enemy>, Without<Syringe>)>,
                    mut query_player: Query<&Damage, With<Player>>,
                    mut deadcount: ResMut<DeadCount>,
                    mut dead_change_room: ResMut<DeadChangeRoom>,
-                   limit_deads: ResMut<LimitDeads>){
+                   limit_deads: ResMut<LimitDeads>,
+                   mut type_dead: ResMut<TypeDeath>){
 
 
     for damage in query_player.iter_mut(){
         for (syringe ,transform_syringe) in query_syringe.iter(){
             let syringe_scale = Vec2::from(transform_syringe.scale.xy());
 
-            for (enemy, mut health, transform_enemy) in query_enemy.iter_mut()  {
+            for (enemy, mut health, mut transform_enemy) in query_enemy.iter_mut()  {
                 let enemy_scale = Vec2::from(transform_enemy.scale.xy());
 
                 let collide = collide(
@@ -363,10 +365,24 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
 
                 if let Some(_) = collide{
+                    if transform_enemy.translation.x >0.0{
+                        transform_enemy.translation.x -= 30.0;
+                    }
+                    if transform_enemy.translation.x <0.0{
+                        transform_enemy.translation.x += 30.0;
+                    }
+                    if transform_enemy.translation.y >0.0{
+                        transform_enemy.translation.y -= 30.0;
+                    }
+                    if transform_enemy.translation.y <0.0{
+                        transform_enemy.translation.y += 30.0;
+                    }
+
                     health.value = health.value - damage.value;
                     commands.entity(syringe).despawn();
 
                     if health.value <= 0{
+                        type_dead.0 = 1;
                         deadcount.0 += 10;
                         commands.entity(enemy).despawn();
 
@@ -374,7 +390,7 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
 
                         if dead_change_room.0 == limit_deads.0{
-                            app_state.set(GameState::Room2).expect("something went wrong");
+                            app_state.set(GameState::Room2);
                         }
                     }
                 }
