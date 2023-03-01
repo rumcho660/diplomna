@@ -60,12 +60,12 @@ pub fn setup_game_story(mut commands: Commands,
     }).insert(Story)
         .with_children(|commands|{
             commands.spawn(TextBundle{
-                text: Text::from_section("
-                                         The virus was so deadly that it took almost half of the human population\n
-                                           But hope was not lost. In United Kingdom there was a special hospital.\n
-                                   The only doctor there was a man of many talents, but the most interesting was his immortality\n
-                                              For that reason he was tasked to sure the whole kingdom\n
-                                                                   Will he succeed...", text_style_menu.clone()),
+                text: Text::from_section("\n
+            The virus was so deadly that it took almost half of the human population\n
+            But hope was not lost. In United Kingdom there was a special hospital.The\n
+            only doctor there was a man of many talents, but the most interesting was\n
+            his immortality. For that reason he was tasked to safe the whole kingdom\n
+            His task is nota an easy one. Will he seduced in the this coming battle ", text_style_menu.clone()),
                 ..default()
             });
 

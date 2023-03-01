@@ -28,7 +28,7 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
     let texture_atlas =
         TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 1, 5, None, None);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
-    let mut speed = 60.0;
+    let mut speed = 110.0;
     let mut y1 = 100.0;
     let mut y2 = -100.0;
     let x1 = 200.0;
@@ -56,8 +56,8 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
             .insert(Velosity{x: 0.0, y: 0.0});
 
         m += 1;
-        y1 += 100.0;
-        speed += 50.0;
+        y1 += 150.0;
+        speed += 70.0;
     }
 
     while n < 2 {
@@ -79,8 +79,8 @@ pub fn spawn_enemy_wave1(commands: &mut Commands,
             .insert(Speed{value: speed})
             .insert(Velosity{x: 0.0, y: 0.0});
         n += 1;
-        y2 += -100.0;
-        speed += 50.0;
+        y2 += -150.0;
+        speed += 70.0;
     }
 }
 
@@ -112,7 +112,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
-        .insert(Speed{value: 250.0})
+        .insert(Speed{value: 240.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 
@@ -131,7 +131,7 @@ pub fn spawn_enemy_wave2(commands: &mut Commands,
     )).insert(Enemy)
         .insert(Health{value: 8})
         .insert(Damage{value: 4})
-        .insert(Speed{value: 150.0})
+        .insert(Speed{value: 270.0})
         .insert(Velosity{x: 0.0, y: 0.0});
 
 

@@ -400,6 +400,10 @@ pub fn syringe_hit(mut app_state: ResMut<State<GameState>>,
 
                         if dead_change_room.0 == limit_deads.0{
                             app_state.set(GameState::Room2);
+                            if dead_change_room.0 == limit_deads.0{
+                                type_dead.0 = 0;
+                                app_state.set(GameState::GameOver);
+                            }
                         }
                     }
                 }

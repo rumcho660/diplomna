@@ -274,7 +274,7 @@ pub fn choose_room(mut commands: &mut Commands,
     if odds>=0.0 && odds<=50.0{
         room1_furniture(&mut commands, &asset_server);
         spawn_enemy_wave1(&mut commands, &asset_server, &mut texture_atlases);
-        limit_deads.0 = 4;
+        limit_deads.0 += 4;
         room = "Room1.png";
     }
 
@@ -283,7 +283,7 @@ pub fn choose_room(mut commands: &mut Commands,
     else if odds>=50.0 && odds<=100.0{
         room2_furniture(&mut commands, &asset_server);
         spawn_enemy_wave2(&mut commands, &asset_server, &mut texture_atlases);
-        limit_deads.0 = 3;
+        limit_deads.0 += 3;
         room = "Room2.png";
     }
     return room;
