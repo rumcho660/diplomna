@@ -11,7 +11,6 @@ mod items;
 use bevy:: prelude::*;
 use bevy::window::close_on_esc;
 use bevy_kira_audio::AudioPlugin;
-use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use crate::enemy::{AttackEnemyTimer, EnemyPlugin};
 use crate::gameover_score::CounterPLugin;
 use crate::gamestory::GameStoryPlugin;
@@ -73,7 +72,6 @@ fn main() {
         .add_state(GameState::GameStory)
         .add_startup_system(setup_camera)
         .add_plugin(AudioPlugin)
-        .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(GameStoryPlugin)
         .add_plugin(MenusPlugin)
         .add_plugin(TimerPlugin)

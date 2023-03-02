@@ -34,5 +34,4 @@ features = [
 ]
 
 [dependencies]
-bevy_rapier2d = "0.20.0"
 rand = "0.8.5"
